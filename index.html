@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brawl Stars Fankit</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --hint-color: #999999;
+            --link-color: #2481cc;
+            --button-color: #40a7e3;
+            --button-text-color: #ffffff;
+            --secondary-bg-color: #f0f0f0;
+            --border-color: #e0e0e0;
+            --card-bg: #ffffff;
+            --header-bg: #ffffff;
+            --banner-bg: #40a7e3;
+        }
+
+        body.dark {
+            --bg-color: #1f1f1f;
+            --text-color: #ffffff;
+            --hint-color: #aaaaaa;
+            --link-color: #40a7e3;
+            --button-color: #40a7e3;
+            --button-text-color: #ffffff;
+            --secondary-bg-color: #2c2c2c;
+            --border-color: #3a3a3a;
+            --card-bg: #2c2c2c;
+            --header-bg: #2c2c2c;
+            --banner-bg: #40a7e3;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.4;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Хедер */
+        .header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--header-bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        /* Баннер Telegram */
+        .telegram-banner {
+            background: var(--banner-bg);
+            padding: 12px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .telegram-banner:hover {
+            opacity: 0.9;
+        }
+
+        .telegram-banner a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .telegram-banner span {
+            font-size: 20px;
+        }
+
+        /* Панель навигации */
+        .nav-panel {
+            padding: 15px 20px;
+            background: var(--secondary-bg-color);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-button {
+            color: var(--link-color);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: none;
+            transition: background-color 0.2s;
+        }
+
+        .back-button:hover {
+            background: rgba(64, 167, 227, 0.1);
+        }
+
+        .back-button.visible {
+            display: block;
+        }
+
+        .path-indicator {
+            font-size: 14px;
+            color: var(--hint-color);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Поиск */
+        .search-container {
+            padding: 20px;
+            background: var(--secondary-bg-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 48px;
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--link-color);
+            box-shadow: 0 0 0 3px rgba(64, 167, 227, 0.2);
+        }
+
+        .search-input::placeholder {
+            color: var(--hint-color);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--hint-color);
+            font-size: 20px;
+        }
+
+        /* Контейнер */
+        .container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Сетка */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .item:hover {
+            border-color: var(--link-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+
+        /* Стили для папки с превью */
+        .folder {
+            position: relative;
+        }
+
+        .folder-preview-grid {
+            width: 100%;
+            height: 140px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 2px;
+            background: var(--secondary-bg-color);
+            position: relative;
+        }
+
+        .folder-preview-item {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: var(--secondary-bg-color);
+        }
+
+        .folder-icon-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: var(--link-color);
+            background: rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            backdrop-filter: blur(2px);
+            z-index: 2;
+        }
+
+        .item-preview {
+            width: 100%;
+            height: 140px;
+            background: var(--secondary-bg-color);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .item-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .item:hover .item-preview img {
+            transform: scale(1.05);
+        }
+
+        .file-icon {
+            width: 100%;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: var(--hint-color);
+            background: var(--secondary-bg-color);
+        }
+
+        .item-info {
+            padding: 12px 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .item-name {
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-color);
+        }
+
+        .folder .item-name {
+            color: var(--link-color);
+        }
+
+        .item-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-size {
+            font-size: 12px;
+            color: var(--hint-color);
+        }
+
+        .item-type {
+            font-size: 12px;
+            color: var(--hint-color);
+        }
+
+        /* Состояния */
+        .loading, .empty {
+            text-align: center;
+            padding: 60px 40px;
+            color: var(--hint-color);
+            grid-column: 1 / -1;
+            font-size: 16px;
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--link-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Результаты поиска */
+        .search-results-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 0 0 20px;
+            color: var(--text-color);
+        }
+
+        /* Уведомление о скачивании */
+        .download-overlay {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--button-color);
+            color: var(--button-text-color);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .download-overlay.show {
+            display: flex;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 12px;
+            }
+            
+            .item-preview,
+            .folder-preview-grid,
+            .file-icon {
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Хедер -->
+    <div class="header">
+        <img src="https://raw.githubusercontent.com/bahrfankit/bahrfankit.github.io/main/files/GameLogo.png" 
+             alt="Brawl Stars" 
+             class="avatar"
+             onerror="this.src='https://via.placeholder.com/40?text=BS'">
+        <div class="title">Brawl Stars Fankit</div>
+    </div>
+    
+    <!-- Баннер Telegram (будет показан только на главной) -->
+    <div class="telegram-banner" id="telegram-banner" onclick="window.open('https://t.me/bahrfankit', '_blank')">
+        <a href="https://t.me/bahrfankit" target="_blank">
+            <span>📱</span> Подпишись на наш Telegram канал!
+        </a>
+    </div>
+    
+    <!-- Панель навигации -->
+    <div class="nav-panel">
+        <button class="back-button" id="back-button" onclick="goBack()">← Назад</button>
+        <span class="path-indicator" id="path-indicator"></span>
+    </div>
+    
+    <!-- Поиск -->
+    <div class="search-container">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" 
+                   class="search-input" 
+                   placeholder="Поиск файлов..."
+                   id="search-input">
+        </div>
+    </div>
+    
+    <!-- Основной контент -->
+    <div class="container">
+        <!-- Основной контент (папки) -->
+        <div id="main-content">
+            <div id="content" class="content-grid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Загрузка...
+                </div>
+            </div>
+        </div>
+        
+        <!-- Результаты поиска -->
+        <div id="search-results" style="display: none;">
+            <div class="search-results-title" id="search-results-title"></div>
+            <div class="content-grid" id="search-results-grid"></div>
+        </div>
+    </div>
+
+    <!-- Уведомление о скачивании -->
+    <div class="download-overlay" id="download-overlay">
+        <span>⬇️</span> Скачивание...
+    </div>
+
+    <script>
+        // Инициализация Telegram Web App
+        const tg = window.Telegram.WebApp;
+        
+        // Расширяем на весь экран
+        tg.expand();
+        
+        // Применяем тему Telegram
+        function applyTelegramTheme() {
+            const isDark = tg.colorScheme === 'dark';
+            document.body.classList.toggle('dark', isDark);
+            
+            const root = document.documentElement;
+            if (tg.themeParams) {
+                root.style.setProperty('--bg-color', tg.themeParams.bg_color || (isDark ? '#1f1f1f' : '#ffffff'));
+                root.style.setProperty('--text-color', tg.themeParams.text_color || (isDark ? '#ffffff' : '#000000'));
+                root.style.setProperty('--hint-color', tg.themeParams.hint_color || (isDark ? '#aaaaaa' : '#999999'));
+                root.style.setProperty('--link-color', tg.themeParams.link_color || '#40a7e3');
+                root.style.setProperty('--button-color', tg.themeParams.button_color || '#40a7e3');
+                root.style.setProperty('--button-text-color', tg.themeParams.button_text_color || '#ffffff');
+                root.style.setProperty('--secondary-bg-color', tg.themeParams.secondary_bg_color || (isDark ? '#2c2c2c' : '#f0f0f0'));
+            }
+        }
+        
+        applyTelegramTheme();
+        tg.onEvent('themeChanged', applyTelegramTheme);
+
+        // Конфигурация
+        const REPO_OWNER = 'bahrfankit';
+        const REPO_NAME = 'bahrfankit.github.io';
+        const START_PATH = 'files';
+        
+        // Переменные
+        let allFilesCache = [];
+        let currentFolderFiles = [];
+        let currentPath = '';
+        let isDownloading = false;
+        let folderPreviewsCache = new Map(); // Кэш для превью папок
+        
+        // Загружаем содержимое при запуске
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await loadAllFilesForSearch();
+                await loadFolderContents('');
+            } catch (error) {
+                console.error('Ошибка инициализации:', error);
+                showError('Не удалось загрузить содержимое');
+            }
+        });
+        
+        // Показать ошибку
+        function showError(message) {
+            const container = document.getElementById('content');
+            container.innerHTML = `<div class="empty">❌ ${message}</div>`;
+        }
+        
+        // Обновление видимости баннера
+        function updateBannerVisibility() {
+            const banner = document.getElementById('telegram-banner');
+            if (currentPath === '') {
+                banner.style.display = 'block';
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+        
+        // Загрузка всех файлов для поиска
+        async function loadAllFilesForSearch() {
+            try {
+                const contents = await getGitHubContentsRecursive(START_PATH);
+                allFilesCache = contents.filter(item => item.type === 'file');
+            } catch (error) {
+                console.error('Ошибка загрузки файлов для поиска:', error);
+                allFilesCache = [];
+            }
+        }
+        
+        // Загрузка содержимого папки
+        async function loadFolderContents(path) {
+            currentPath = path;
+            
+            // Обновляем видимость баннера
+            updateBannerVisibility();
+            
+            // Обновляем индикатор пути
+            updatePathIndicator();
+            
+            // Обновляем кнопку назад
+            updateBackButton();
+            
+            // Показываем загрузку
+            document.getElementById('content').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Загрузка...
+                </div>
+            `;
+            document.getElementById('search-results').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            
+            try {
+                const fullPath = path ? `${START_PATH}/${path}` : START_PATH;
+                const contents = await getGitHubContents(fullPath);
+                
+                currentFolderFiles = contents;
+                
+                // Загружаем превью для папок
+                await loadFolderPreviews(contents);
+                
+                displayContents(contents);
+                
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                if (error.message.includes('404')) {
+                    showError('Папка не найдена');
+                } else {
+                    showError('Ошибка загрузки содержимого');
+                }
+            }
+        }
+        
+        // Загрузка превью для папок
+        async function loadFolderPreviews(contents) {
+            const folders = contents.filter(item => item.type === 'dir');
+            
+            for (const folder of folders) {
+                if (!folderPreviewsCache.has(folder.path)) {
+                    try {
+                        const folderPath = folder.path;
+                        const folderContents = await getGitHubContents(folderPath);
+                        
+                        // Берем первые 4 изображения для превью
+                        const images = folderContents
+                            .filter(item => item.type === 'file' && isImageFile(item.name))
+                            .slice(0, 4);
+                        
+                        const previewUrls = images.map(img => 
+                            img.download_url || `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${img.path}`
+                        );
+                        
+                        folderPreviewsCache.set(folder.path, previewUrls);
+                    } catch (error) {
+                        console.warn(`Не удалось загрузить превью для ${folder.path}:`, error);
+                        folderPreviewsCache.set(folder.path, []);
+                    }
+                }
+            }
+        }
+        
+        // Обновление индикатора пути
+        function updatePathIndicator() {
+            const indicator = document.getElementById('path-indicator');
+            if (currentPath === '') {
+                indicator.textContent = '';
+            } else {
+                indicator.textContent = currentPath;
+            }
+        }
+        
+        // Обновление кнопки назад
+        function updateBackButton() {
+            const backButton = document.getElementById('back-button');
+            
+            if (currentPath === '') {
+                backButton.classList.remove('visible');
+            } else {
+                backButton.classList.add('visible');
+            }
+        }
+        
+        // Возврат назад
+        function goBack() {
+            if (currentPath === '') return;
+            
+            const pathParts = currentPath.split('/');
+            pathParts.pop();
+            
+            const parentPath = pathParts.join('/');
+            loadFolderContents(parentPath);
+        }
+        
+        // Получение содержимого папки
+        async function getGitHubContents(path) {
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+            
+            const response = await fetch(url);
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error('404 Not Found');
+                }
+                throw new Error(`HTTP ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            const seen = new Set();
+            return data.filter(item => {
+                const key = `${item.path}:${item.type}`;
+                if (seen.has(key)) return false;
+                seen.add(key);
+                return true;
+            });
+        }
+        
+        // Рекурсивное получение всех файлов для поиска
+        async function getGitHubContentsRecursive(path) {
+            try {
+                const contents = await getGitHubContents(path);
+                const result = [];
+                
+                for (const item of contents) {
+                    if (item.type === 'dir') {
+                        try {
+                            const subContents = await getGitHubContentsRecursive(item.path);
+                            result.push(...subContents);
+                        } catch (error) {
+                            console.warn(`Не удалось загрузить папку ${item.path}:`, error);
+                        }
+                    } else {
+                        result.push(item);
+                    }
+                }
+                
+                return result;
+            } catch (error) {
+                console.warn(`Не удалось загрузить ${path}:`, error);
+                return [];
+            }
+        }
+        
+        // Отображение содержимого
+        function displayContents(contents) {
+            const container = document.getElementById('content');
+            
+            if (!contents || contents.length === 0) {
+                container.innerHTML = '<div class="empty">📁 Папка пуста</div>';
+                return;
+            }
+            
+            const sorted = [...contents].sort((a, b) => {
+                if (a.type === b.type) return a.name.localeCompare(b.name);
+                return a.type === 'dir' ? -1 : 1;
+            });
+            
+            container.innerHTML = sorted.map(item => createItemElement(item)).join('');
+        }
+        
+        // Создание элемента
+        function createItemElement(item) {
+            const isFolder = item.type === 'dir';
+            const isImage = !isFolder && isImageFile(item.name);
+            
+            const safeName = escapeHtml(item.name);
+            const escapedNameForJs = escapeJsString(item.name);
+            
+            if (isFolder) {
+                // Получаем превью для папки из кэша
+                const previewUrls = folderPreviewsCache.get(item.path) || [];
+                
+                return createFolderElement(item, safeName, escapedNameForJs, previewUrls);
+            } else {
+                const rawUrl = item.download_url || 
+                              `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`;
+                const escapedUrlForJs = escapeJsString(rawUrl);
+                
+                return createFileElement(item, safeName, escapedNameForJs, escapedUrlForJs, isImage);
+            }
+        }
+        
+        // Создание элемента папки с превью
+        function createFolderElement(item, safeName, escapedNameForJs, previewUrls) {
+            let previewHtml = '';
+            
+            if (previewUrls.length > 0) {
+                // Создаем сетку из превью
+                const previewItems = [];
+                for (let i = 0; i < 4; i++) {
+                    if (i < previewUrls.length) {
+                        previewItems.push(`
+                            <img class="folder-preview-item" 
+                                 src="${escapeHtml(previewUrls[i])}" 
+                                 loading="lazy"
+                                 onerror="this.style.display='none'; this.parentElement.innerHTML+='<div class=\\'folder-preview-item\\' style=\\'background: var(--secondary-bg-color);\\'></div>'">
+                        `);
+                    } else {
+                        previewItems.push('<div class="folder-preview-item" style="background: var(--secondary-bg-color);"></div>');
+                    }
+                }
+                
+                previewHtml = `
+                    <div class="folder-preview-grid">
+                        ${previewItems.join('')}
+                        <div class="folder-icon-overlay">📁</div>
+                    </div>
+                `;
+            } else {
+                previewHtml = '<div class="folder-icon">📁</div>';
+            }
+            
+            return `
+                <div class="item folder" onclick="openFolder('${escapedNameForJs}')">
+                    ${previewHtml}
+                    <div class="item-info">
+                        <div class="item-name" title="${safeName}">${safeName}</div>
+                        <div class="item-details">
+                            <div class="item-type">Папка</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Создание элемента файла
+        function createFileElement(item, safeName, escapedNameForJs, escapedUrlForJs, isImage) {
+            if (isImage) {
+                return `
+                    <div class="item" onclick="downloadFile('${escapedNameForJs}', '${escapedUrlForJs}')">
+                        <div class="item-preview">
+                            <img src="${escapeHtml(escapedUrlForJs)}" 
+                                 alt="${safeName}"
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'file-icon\\'>📄</div>';">
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name" title="${safeName}">${safeName}</div>
+                            <div class="item-details">
+                                <div class="item-size">${formatFileSize(item.size)}</div>
+                                <div class="item-type">${getFileExtension(item.name)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="item" onclick="downloadFile('${escapedNameForJs}', '${escapedUrlForJs}')">
+                        <div class="file-icon">📄</div>
+                        <div class="item-info">
+                            <div class="item-name" title="${safeName}">${safeName}</div>
+                            <div class="item-details">
+                                <div class="item-size">${formatFileSize(item.size)}</div>
+                                <div class="item-type">${getFileExtension(item.name)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Экранирование для HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Экранирование для JavaScript строки
+        function escapeJsString(text) {
+            return text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+        }
+        
+        // Открытие папки
+        function openFolder(folderName) {
+            const newPath = currentPath ? `${currentPath}/${folderName}` : folderName;
+            loadFolderContents(newPath);
+        }
+        
+        // Скачивание файла через fetch + blob (как в примере)
+        async function downloadFile(filename, url) {
+            if (isDownloading) {
+                tg.showPopup({
+                    title: 'Скачивание',
+                    message: 'Файл уже скачивается, подождите...',
+                    buttons: [{type: 'ok'}]
+                });
+                return;
+            }
+            
+            const overlay = document.getElementById('download-overlay');
+            overlay.classList.add('show');
+            
+            isDownloading = true;
+            
+            try {
+                // Скачиваем через fetch как в примере
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Ошибка загрузки');
+                
+                const blob = await response.blob();
+                
+                // Создаем ссылку для скачивания
+                const link = document.getElementById('download-link') || document.createElement('a');
+                link.id = 'download-link';
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                link.style.display = 'none';
+                
+                if (!document.getElementById('download-link')) {
+                    document.body.appendChild(link);
+                }
+                
+                link.click();
+                
+                // Очищаем объект URL
+                setTimeout(() => {
+                    URL.revokeObjectURL(link.href);
+                }, 1000);
+                
+                tg.showPopup({
+                    title: 'Скачивание начато',
+                    message: `Файл "${filename}" будет сохранен`,
+                    buttons: [{type: 'ok'}]
+                });
+                
+            } catch (error) {
+                console.error('Ошибка скачивания:', error);
+                
+                tg.showPopup({
+                    title: 'Ошибка',
+                    message: 'Не удалось скачать файл',
+                    buttons: [{type: 'ok'}]
+                });
+            } finally {
+                setTimeout(() => {
+                    overlay.classList.remove('show');
+                    isDownloading = false;
+                }, 1500);
+            }
+        }
+        
+        // Обработчик поиска
+        let searchTimeout;
+        document.getElementById('search-input').addEventListener('input', function(e) {
+            clearTimeout(searchTimeout);
+            
+            searchTimeout = setTimeout(() => {
+                const query = e.target.value.toLowerCase().trim();
+                
+                if (query.length === 0) {
+                    document.getElementById('search-results').style.display = 'none';
+                    document.getElementById('main-content').style.display = 'block';
+                    return;
+                }
+                
+                const searchResults = allFilesCache.filter(item => 
+                    item.name.toLowerCase().includes(query)
+                );
+                
+                const resultsContainer = document.getElementById('search-results');
+                const resultsGrid = document.getElementById('search-results-grid');
+                const resultsTitle = document.getElementById('search-results-title');
+                
+                document.getElementById('main-content').style.display = 'none';
+                resultsContainer.style.display = 'block';
+                
+                if (searchResults.length === 0) {
+                    resultsTitle.textContent = `❌ Ничего не найдено для "${query}"`;
+                    resultsGrid.innerHTML = '<div class="empty">Попробуйте другой запрос</div>';
+                } else {
+                    resultsTitle.textContent = `📁 Найдено: ${searchResults.length} файлов`;
+                    resultsGrid.innerHTML = searchResults
+                        .slice(0, 50)
+                        .map(item => createSearchResultElement(item))
+                        .join('');
+                }
+            }, 300);
+        });
+        
+        // Элемент результата поиска
+        function createSearchResultElement(item) {
+            const isImage = isImageFile(item.name);
+            const rawUrl = item.download_url || 
+                          `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`;
+            
+            const safeName = escapeHtml(item.name);
+            const escapedNameForJs = escapeJsString(item.name);
+            const escapedUrlForJs = escapeJsString(rawUrl);
+            
+            if (isImage) {
+                return `
+                    <div class="item" onclick="downloadFile('${escapedNameForJs}', '${escapedUrlForJs}')">
+                        <div class="item-preview">
+                            <img src="${escapeHtml(rawUrl)}" 
+                                 alt="${safeName}"
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'file-icon\\'>📄</div>';">
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name" title="${safeName}">${safeName}</div>
+                            <div class="item-details">
+                                <div class="item-size">${formatFileSize(item.size)}</div>
+                                <div class="item-type">${getFileExtension(item.name)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="item" onclick="downloadFile('${escapedNameForJs}', '${escapedUrlForJs}')">
+                        <div class="file-icon">📄</div>
+                        <div class="item-info">
+                            <div class="item-name" title="${safeName}">${safeName}</div>
+                            <div class="item-details">
+                                <div class="item-size">${formatFileSize(item.size)}</div>
+                                <div class="item-type">${getFileExtension(item.name)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Вспомогательные функции
+        function isImageFile(filename) {
+            const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg', 'ico'];
+            const ext = filename.split('.').pop().toLowerCase();
+            return imageExtensions.includes(ext);
+        }
+        
+        function getFileExtension(filename) {
+            const parts = filename.split('.');
+            if (parts.length === 1) return 'ФАЙЛ';
+            return parts.pop().toUpperCase();
+        }
+        
+        function formatFileSize(bytes) {
+            if (!bytes || bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
