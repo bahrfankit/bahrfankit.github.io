@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Brawl Stars Fankit</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -403,7 +404,7 @@
         <div class="title">Brawl Stars Fankit</div>
     </div>
     
-    <!-- Баннер Telegram (будет показан только на главной) -->
+    <!-- Баннер Telegram -->
     <div class="telegram-banner" id="telegram-banner" onclick="window.open('https://t.me/bahrfankit', '_blank')">
         <a href="https://t.me/bahrfankit" target="_blank">
             <span>📱</span> Подпишись на наш Telegram канал!
@@ -448,7 +449,7 @@
 
     <!-- Уведомление о скачивании -->
     <div class="download-overlay" id="download-overlay">
-        <span>⬇️</span> Скачивание...
+        <span>⬇️</span> Отправка через бота...
     </div>
 
     <script>
@@ -457,6 +458,10 @@
         
         // Расширяем на весь экран
         tg.expand();
+        
+        // Конфигурация бота - ⚠️ ТОКЕН ВСТАВЛЕН ЯВНО (вы берёте ответственность)
+        const BOT_TOKEN = '8668575732:AAGUos5ba8yDrzj6w42Sb8pRU4GRl3aCK9o';
+        const BOT_USERNAME = 'bahrfankit_bot'; // Имя бота для ссылки
         
         // Применяем тему Telegram
         function applyTelegramTheme() {
@@ -478,7 +483,7 @@
         applyTelegramTheme();
         tg.onEvent('themeChanged', applyTelegramTheme);
 
-        // Конфигурация
+        // Конфигурация GitHub
         const REPO_OWNER = 'bahrfankit';
         const REPO_NAME = 'bahrfankit.github.io';
         const START_PATH = 'files';
@@ -767,7 +772,7 @@
         function createFileElement(item, safeName, escapedNameForJs, escapedUrlForJs, isImage) {
             if (isImage) {
                 return `
-                    <div class="item" onclick="downloadFile('${escapedNameForJs}', '${escapedUrlForJs}')">
+                    <div class="item" onclick="sendFileViaBot('${escapedNameForJs}', '${escapedUrlForJs}')">
                         <div class="item-preview">
                             <img src="${escapeHtml(escapedUrlForJs)}" 
                                  alt="${safeName}"
@@ -785,7 +790,7 @@
                 `;
             } else {
                 return `
-                    <div class="item" onclick="downloadFile('${escapedNameForJs}', '${escapedUrlForJs}')">
+                    <div class="item" onclick="sendFileViaBot('${escapedNameForJs}', '${escapedUrlForJs}')">
                         <div class="file-icon">📄</div>
                         <div class="item-info">
                             <div class="item-name" title="${safeName}">${safeName}</div>
@@ -817,12 +822,12 @@
             loadFolderContents(newPath);
         }
         
-        // Скачивание файла через fetch + blob (как в примере)
-        async function downloadFile(filename, url) {
+        // НОВАЯ ФУНКЦИЯ: Отправка файла через бота
+        async function sendFileViaBot(filename, url) {
             if (isDownloading) {
                 tg.showPopup({
-                    title: 'Скачивание',
-                    message: 'Файл уже скачивается, подождите...',
+                    title: 'Отправка',
+                    message: 'Файл уже отправляется, подождите...',
                     buttons: [{type: 'ok'}]
                 });
                 return;
@@ -834,44 +839,82 @@
             isDownloading = true;
             
             try {
-                // Скачиваем через fetch как в примере
+                // Получаем ID пользователя
+                const userId = tg.initDataUnsafe?.user?.id;
+                
+                if (!userId) {
+                    // Если не удалось получить ID (например, в браузере)
+                    tg.showPopup({
+                        title: 'Ошибка',
+                        message: 'Не удалось определить ваш Telegram ID. Открываем файл в браузере?',
+                        buttons: [
+                            {type: 'default', text: 'Открыть'},
+                            {type: 'cancel'}
+                        ]
+                    }, (buttonId) => {
+                        if (buttonId === 'ok') {
+                            window.open(url, '_blank');
+                        }
+                    });
+                    return;
+                }
+                
+                // Скачиваем файл с GitHub
                 const response = await fetch(url);
-                if (!response.ok) throw new Error('Ошибка загрузки');
+                if (!response.ok) throw new Error('Ошибка загрузки файла');
                 
                 const blob = await response.blob();
                 
-                // Создаем ссылку для скачивания
-                const link = document.getElementById('download-link') || document.createElement('a');
-                link.id = 'download-link';
-                link.href = URL.createObjectURL(blob);
-                link.download = filename;
-                link.style.display = 'none';
+                // Создаем FormData для отправки боту
+                const formData = new FormData();
+                formData.append('chat_id', userId);
+                formData.append('document', blob, filename);
                 
-                if (!document.getElementById('download-link')) {
-                    document.body.appendChild(link);
+                // Отправляем файл через бота
+                const botResponse = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await botResponse.json();
+                
+                if (result.ok) {
+                    // Успешно отправили
+                    tg.showPopup({
+                        title: '✅ Файл отправлен!',
+                        message: `Файл "${filename}" отправлен в чат с ботом @${BOT_USERNAME}`,
+                        buttons: [
+                            {type: 'default', text: 'Перейти в чат'},
+                            {type: 'ok', text: 'ОК'}
+                        ]
+                    }, (buttonId) => {
+                        if (buttonId === 'ok') {
+                            tg.close();
+                        } else {
+                            // Открываем чат с ботом
+                            tg.openTelegramLink(`https://t.me/${BOT_USERNAME}`);
+                        }
+                    });
+                } else {
+                    throw new Error(result.description || 'Ошибка отправки');
                 }
                 
-                link.click();
-                
-                // Очищаем объект URL
-                setTimeout(() => {
-                    URL.revokeObjectURL(link.href);
-                }, 1000);
-                
-                tg.showPopup({
-                    title: 'Скачивание начато',
-                    message: `Файл "${filename}" будет сохранен`,
-                    buttons: [{type: 'ok'}]
-                });
-                
             } catch (error) {
-                console.error('Ошибка скачивания:', error);
+                console.error('Ошибка отправки через бота:', error);
                 
                 tg.showPopup({
-                    title: 'Ошибка',
-                    message: 'Не удалось скачать файл',
-                    buttons: [{type: 'ok'}]
+                    title: '❌ Ошибка',
+                    message: 'Не удалось отправить файл. Открыть в браузере?',
+                    buttons: [
+                        {type: 'default', text: 'Открыть'},
+                        {type: 'cancel'}
+                    ]
+                }, (buttonId) => {
+                    if (buttonId === 'ok') {
+                        window.open(url, '_blank');
+                    }
                 });
+                
             } finally {
                 setTimeout(() => {
                     overlay.classList.remove('show');
@@ -930,7 +973,7 @@
             
             if (isImage) {
                 return `
-                    <div class="item" onclick="downloadFile('${escapedNameForJs}', '${escapedUrlForJs}')">
+                    <div class="item" onclick="sendFileViaBot('${escapedNameForJs}', '${escapedUrlForJs}')">
                         <div class="item-preview">
                             <img src="${escapeHtml(rawUrl)}" 
                                  alt="${safeName}"
@@ -948,7 +991,7 @@
                 `;
             } else {
                 return `
-                    <div class="item" onclick="downloadFile('${escapedNameForJs}', '${escapedUrlForJs}')">
+                    <div class="item" onclick="sendFileViaBot('${escapedNameForJs}', '${escapedUrlForJs}')">
                         <div class="file-icon">📄</div>
                         <div class="item-info">
                             <div class="item-name" title="${safeName}">${safeName}</div>
