@@ -26,6 +26,8 @@
             --card-bg: #ffffff;
             --header-bg: #ffffff;
             --banner-bg: #40a7e3;
+            --selected-color: rgba(64, 167, 227, 0.3);
+            --queue-bg: #2c2c2c;
         }
 
         body.dark {
@@ -40,6 +42,8 @@
             --card-bg: #2c2c2c;
             --header-bg: #2c2c2c;
             --banner-bg: #40a7e3;
+            --selected-color: rgba(64, 167, 227, 0.5);
+            --queue-bg: #1a1a1a;
         }
 
         body {
@@ -112,6 +116,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            flex-wrap: wrap;
         }
 
         .back-button {
@@ -140,6 +145,94 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            flex: 1;
+        }
+
+        /* Панель фильтров */
+        .filter-panel {
+            padding: 10px 20px;
+            background: var(--secondary-bg-color);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-btn.active {
+            background: var(--link-color);
+            color: white;
+            border-color: var(--link-color);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--link-color);
+        }
+
+        /* Панель выделения */
+        .selection-panel {
+            padding: 10px 20px;
+            background: var(--link-color);
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 60px;
+            z-index: 99;
+        }
+
+        .selection-panel.visible {
+            display: flex;
+        }
+
+        .selection-count {
+            font-weight: 500;
+        }
+
+        .selection-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .selection-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.2s;
+        }
+
+        .selection-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .selection-btn.danger {
+            background: rgba(255, 0, 0, 0.3);
+        }
+
+        .selection-btn.danger:hover {
+            background: rgba(255, 0, 0, 0.4);
         }
 
         /* Поиск */
@@ -201,12 +294,18 @@
 
         .item {
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
+            border: 2px solid var(--border-color);
             border-radius: 12px;
             overflow: hidden;
             transition: all 0.2s ease;
             position: relative;
             cursor: pointer;
+        }
+
+        .item.selected {
+            border-color: var(--link-color);
+            background: var(--selected-color);
+            transform: scale(0.98);
         }
 
         .item:hover {
@@ -215,7 +314,7 @@
             box-shadow: 0 6px 16px rgba(0,0,0,0.1);
         }
 
-        /* Стили для папки с превью */
+        /* Стили для папки */
         .folder {
             position: relative;
         }
@@ -238,21 +337,40 @@
             background: var(--secondary-bg-color);
         }
 
-        .folder-icon-overlay {
+        .folder-overlay {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
+            background: linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
-            color: var(--link-color);
-            background: rgba(0, 0, 0, 0.3);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            backdrop-filter: blur(2px);
+            flex-direction: column;
+            gap: 5px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            backdrop-filter: blur(3px);
             z-index: 2;
+        }
+
+        .folder-overlay span {
+            font-size: 40px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+
+        .folder-name {
+            font-size: 14px;
+            font-weight: 500;
+            max-width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 5px 10px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
         }
 
         .item-preview {
@@ -281,13 +399,38 @@
             align-items: center;
             justify-content: center;
             font-size: 48px;
-            color: var(--hint-color);
             background: var(--secondary-bg-color);
+        }
+
+        .file-icon.image {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .file-icon.audio {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .file-icon.video {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .file-icon.archive {
+            background: linear-gradient(135deg, #f9d423 0%, #f83600 100%);
+            color: white;
+        }
+
+        .file-icon.document {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
         }
 
         .item-info {
             padding: 12px 15px;
             border-top: 1px solid var(--border-color);
+            background: var(--card-bg);
         }
 
         .item-name {
@@ -298,10 +441,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
             color: var(--text-color);
-        }
-
-        .folder .item-name {
-            color: var(--link-color);
         }
 
         .item-details {
@@ -318,6 +457,41 @@
         .item-type {
             font-size: 12px;
             color: var(--hint-color);
+            text-transform: uppercase;
+        }
+
+        /* Индикатор выбора */
+        .selection-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.5);
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .item.selected .selection-indicator {
+            opacity: 1;
+            background: var(--link-color);
+        }
+
+        .selection-mode .selection-indicator {
+            opacity: 0.5;
+        }
+
+        .selection-mode .item:hover .selection-indicator {
+            opacity: 1;
         }
 
         /* Состояния */
@@ -357,26 +531,203 @@
             color: var(--text-color);
         }
 
-        /* Уведомление о скачивании */
-        .download-overlay {
+        /* Уведомления */
+        .notification-container {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 90%;
+            max-width: 400px;
+            pointer-events: none;
+        }
+
+        .notification {
             background: var(--button-color);
             color: var(--button-text-color);
             padding: 12px 24px;
             border-radius: 30px;
             font-weight: 500;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            display: none;
+            display: flex;
             align-items: center;
             gap: 8px;
+            animation: slideIn 0.3s ease;
+            pointer-events: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .notification.success {
+            background: #4CAF50;
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        .notification.warning {
+            background: #ff9800;
+        }
+
+        .notification.info {
+            background: var(--link-color);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Очередь */
+        .queue-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
             z-index: 1000;
         }
 
-        .download-overlay.show {
+        .queue-toggle {
+            background: var(--button-color);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            cursor: pointer;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .queue-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .queue-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #f44336;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .queue-panel {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            width: 300px;
+            max-height: 400px;
+            background: var(--queue-bg);
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .queue-panel.visible {
+            display: flex;
+        }
+
+        .queue-header {
+            padding: 15px;
+            background: var(--secondary-bg-color);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .queue-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .queue-clear {
+            background: none;
+            border: none;
+            color: var(--hint-color);
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .queue-list {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 300px;
+            padding: 10px;
+        }
+
+        .queue-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .queue-item:last-child {
+            border-bottom: none;
+        }
+
+        .queue-item-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .queue-item-status.pending {
+            background: #ff9800;
+        }
+
+        .queue-item-status.sending {
+            background: var(--link-color);
+            animation: pulse 1s infinite;
+        }
+
+        .queue-item-status.completed {
+            background: #4CAF50;
+        }
+
+        .queue-item-status.error {
+            background: #f44336;
+        }
+
+        .queue-item-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         /* Адаптивность */
@@ -390,6 +741,12 @@
             .folder-preview-grid,
             .file-icon {
                 height: 120px;
+            }
+
+            .queue-panel {
+                left: 10px;
+                right: 10px;
+                width: auto;
             }
         }
     </style>
@@ -415,6 +772,35 @@
     <div class="nav-panel">
         <button class="back-button" id="back-button" onclick="goBack()">← Назад</button>
         <span class="path-indicator" id="path-indicator"></span>
+        <button class="filter-btn" id="selection-mode-btn" onclick="toggleSelectionMode()">
+            <span>☑️</span> Выбрать
+        </button>
+    </div>
+
+    <!-- Панель выделения -->
+    <div class="selection-panel" id="selection-panel">
+        <span class="selection-count" id="selection-count">Выбрано: 0</span>
+        <div class="selection-actions">
+            <button class="selection-btn" onclick="addSelectedToQueue()">
+                <span>➕</span> В очередь
+            </button>
+            <button class="selection-btn" onclick="selectAll()">
+                <span>✓</span> Всё
+            </button>
+            <button class="selection-btn danger" onclick="clearSelection()">
+                <span>✕</span> Отмена
+            </button>
+        </div>
+    </div>
+    
+    <!-- Панель фильтров -->
+    <div class="filter-panel">
+        <button class="filter-btn" id="filter-name" onclick="setSort('name')">
+            <span>📝</span> По названию
+        </button>
+        <button class="filter-btn" id="filter-date" onclick="setSort('date')">
+            <span>📅</span> По дате
+        </button>
     </div>
     
     <!-- Поиск -->
@@ -447,9 +833,24 @@
         </div>
     </div>
 
-    <!-- Уведомление о скачивании -->
-    <div class="download-overlay" id="download-overlay">
-        <span>⬇️</span> Отправка через бота...
+    <!-- Уведомления -->
+    <div class="notification-container" id="notification-container"></div>
+
+    <!-- Очередь -->
+    <div class="queue-container">
+        <button class="queue-toggle" id="queue-toggle" onclick="toggleQueue()">
+            <span>📋</span>
+            <span class="queue-badge" id="queue-badge">0</span>
+        </button>
+        <div class="queue-panel" id="queue-panel">
+            <div class="queue-header">
+                <h3>Очередь отправки</h3>
+                <button class="queue-clear" onclick="clearQueue()">✕</button>
+            </div>
+            <div class="queue-list" id="queue-list">
+                <!-- Элементы очереди будут добавляться сюда -->
+            </div>
+        </div>
     </div>
 
     <script>
@@ -459,9 +860,9 @@
         // Расширяем на весь экран
         tg.expand();
         
-        // Конфигурация бота - ⚠️ ТОКЕН ВСТАВЛЕН ЯВНО (вы берёте ответственность)
+        // Конфигурация бота
         const BOT_TOKEN = '8668575732:AAGUos5ba8yDrzj6w42Sb8pRU4GRl3aCK9o';
-        const BOT_USERNAME = 'bahrfankit_bot'; // Имя бота для ссылки
+        const BOT_USERNAME = 'bahrfankit_bot';
         
         // Применяем тему Telegram
         function applyTelegramTheme() {
@@ -492,8 +893,18 @@
         let allFilesCache = [];
         let currentFolderFiles = [];
         let currentPath = '';
-        let isDownloading = false;
-        let folderPreviewsCache = new Map(); // Кэш для превью папок
+        let folderPreviewsCache = new Map();
+        
+        // Очередь файлов
+        let fileQueue = [];
+        let isProcessing = false;
+        
+        // Выделение
+        let selectedItems = new Set();
+        let selectionMode = false;
+        
+        // Сортировка
+        let currentSort = 'name'; // 'name' или 'date'
         
         // Загружаем содержимое при запуске
         document.addEventListener('DOMContentLoaded', async () => {
@@ -502,14 +913,23 @@
                 await loadFolderContents('');
             } catch (error) {
                 console.error('Ошибка инициализации:', error);
-                showError('Не удалось загрузить содержимое');
+                showNotification('❌ Не удалось загрузить содержимое', 'error');
             }
         });
         
-        // Показать ошибку
-        function showError(message) {
-            const container = document.getElementById('content');
-            container.innerHTML = `<div class="empty">❌ ${message}</div>`;
+        // Показать уведомление
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `<span>${message}</span>`;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.3s reverse';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
         
         // Обновление видимости баннера
@@ -546,6 +966,9 @@
             // Обновляем кнопку назад
             updateBackButton();
             
+            // Очищаем выделение
+            clearSelection();
+            
             // Показываем загрузку
             document.getElementById('content').innerHTML = `
                 <div class="loading">
@@ -565,16 +988,51 @@
                 // Загружаем превью для папок
                 await loadFolderPreviews(contents);
                 
-                displayContents(contents);
+                // Сортируем и отображаем
+                sortContents();
                 
             } catch (error) {
                 console.error('Ошибка загрузки:', error);
                 if (error.message.includes('404')) {
-                    showError('Папка не найдена');
+                    showNotification('📁 Папка не найдена', 'error');
                 } else {
-                    showError('Ошибка загрузки содержимого');
+                    showNotification('❌ Ошибка загрузки содержимого', 'error');
                 }
             }
+        }
+        
+        // Сортировка содержимого
+        function sortContents() {
+            const sorted = [...currentFolderFiles].sort((a, b) => {
+                // Сначала папки, потом файлы
+                if (a.type !== b.type) {
+                    return a.type === 'dir' ? -1 : 1;
+                }
+                
+                // Затем сортировка по выбранному критерию
+                if (currentSort === 'name') {
+                    return a.name.localeCompare(b.name);
+                } else if (currentSort === 'date') {
+                    // Для GitHub API дата может быть в разных местах
+                    const dateA = new Date(a.last_modified || a.created_at || 0);
+                    const dateB = new Date(b.last_modified || b.created_at || 0);
+                    return dateB - dateA; // Сначала новые
+                }
+            });
+            
+            displayContents(sorted);
+        }
+        
+        // Установка сортировки
+        function setSort(type) {
+            currentSort = type;
+            
+            // Обновляем активную кнопку
+            document.getElementById('filter-name').classList.toggle('active', type === 'name');
+            document.getElementById('filter-date').classList.toggle('active', type === 'date');
+            
+            // Применяем сортировку
+            sortContents();
         }
         
         // Загрузка превью для папок
@@ -609,7 +1067,7 @@
         function updatePathIndicator() {
             const indicator = document.getElementById('path-indicator');
             if (currentPath === '') {
-                indicator.textContent = '';
+                indicator.textContent = 'Корневая папка';
             } else {
                 indicator.textContent = currentPath;
             }
@@ -695,42 +1153,35 @@
                 return;
             }
             
-            const sorted = [...contents].sort((a, b) => {
-                if (a.type === b.type) return a.name.localeCompare(b.name);
-                return a.type === 'dir' ? -1 : 1;
-            });
-            
-            container.innerHTML = sorted.map(item => createItemElement(item)).join('');
+            container.innerHTML = contents.map(item => createItemElement(item)).join('');
         }
         
         // Создание элемента
         function createItemElement(item) {
             const isFolder = item.type === 'dir';
             const isImage = !isFolder && isImageFile(item.name);
+            const isSelected = selectedItems.has(item.path);
             
             const safeName = escapeHtml(item.name);
             const escapedNameForJs = escapeJsString(item.name);
             
             if (isFolder) {
-                // Получаем превью для папки из кэша
                 const previewUrls = folderPreviewsCache.get(item.path) || [];
-                
-                return createFolderElement(item, safeName, escapedNameForJs, previewUrls);
+                return createFolderElement(item, safeName, escapedNameForJs, previewUrls, isSelected);
             } else {
                 const rawUrl = item.download_url || 
                               `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`;
                 const escapedUrlForJs = escapeJsString(rawUrl);
                 
-                return createFileElement(item, safeName, escapedNameForJs, escapedUrlForJs, isImage);
+                return createFileElement(item, safeName, escapedNameForJs, escapedUrlForJs, isImage, isSelected);
             }
         }
         
-        // Создание элемента папки с превью
-        function createFolderElement(item, safeName, escapedNameForJs, previewUrls) {
+        // Создание элемента папки
+        function createFolderElement(item, safeName, escapedNameForJs, previewUrls, isSelected) {
             let previewHtml = '';
             
             if (previewUrls.length > 0) {
-                // Создаем сетку из превью
                 const previewItems = [];
                 for (let i = 0; i < 4; i++) {
                     if (i < previewUrls.length) {
@@ -738,7 +1189,7 @@
                             <img class="folder-preview-item" 
                                  src="${escapeHtml(previewUrls[i])}" 
                                  loading="lazy"
-                                 onerror="this.style.display='none'; this.parentElement.innerHTML+='<div class=\\'folder-preview-item\\' style=\\'background: var(--secondary-bg-color);\\'></div>'">
+                                 onerror="this.style.display='none';">
                         `);
                     } else {
                         previewItems.push('<div class="folder-preview-item" style="background: var(--secondary-bg-color);"></div>');
@@ -748,72 +1199,125 @@
                 previewHtml = `
                     <div class="folder-preview-grid">
                         ${previewItems.join('')}
-                        <div class="folder-icon-overlay">📁</div>
+                        <div class="folder-overlay">
+                            <span>📁</span>
+                            <div class="folder-name" title="${safeName}">${safeName}</div>
+                        </div>
                     </div>
                 `;
             } else {
-                previewHtml = '<div class="folder-icon">📁</div>';
+                previewHtml = `
+                    <div class="folder-preview-grid">
+                        <div class="folder-preview-item" style="grid-column: 1/-1; display: flex; align-items: center; justify-content: center;">
+                            <span style="font-size: 48px; opacity: 0.5;">📁</span>
+                        </div>
+                        <div class="folder-overlay">
+                            <span>📁</span>
+                            <div class="folder-name" title="${safeName}">${safeName}</div>
+                        </div>
+                    </div>
+                `;
             }
             
             return `
-                <div class="item folder" onclick="openFolder('${escapedNameForJs}')">
+                <div class="item folder ${isSelected ? 'selected' : ''}" 
+                     onclick="handleItemClick(event, '${escapedNameForJs}', true)"
+                     data-path="${escapeHtml(item.path)}"
+                     data-type="folder">
                     ${previewHtml}
-                    <div class="item-info">
-                        <div class="item-name" title="${safeName}">${safeName}</div>
-                        <div class="item-details">
-                            <div class="item-type">Папка</div>
-                        </div>
-                    </div>
+                    <div class="selection-indicator">✓</div>
                 </div>
             `;
         }
         
         // Создание элемента файла
-        function createFileElement(item, safeName, escapedNameForJs, escapedUrlForJs, isImage) {
-            if (isImage) {
-                return `
-                    <div class="item" onclick="sendFileViaBot('${escapedNameForJs}', '${escapedUrlForJs}')">
-                        <div class="item-preview">
-                            <img src="${escapeHtml(escapedUrlForJs)}" 
-                                 alt="${safeName}"
-                                 loading="lazy"
-                                 onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'file-icon\\'>📄</div>';">
-                        </div>
-                        <div class="item-info">
-                            <div class="item-name" title="${safeName}">${safeName}</div>
-                            <div class="item-details">
-                                <div class="item-size">${formatFileSize(item.size)}</div>
-                                <div class="item-type">${getFileExtension(item.name)}</div>
-                            </div>
+        function createFileElement(item, safeName, escapedNameForJs, escapedUrlForJs, isImage, isSelected) {
+            const fileType = getFileCategory(item.name);
+            const icon = getFileIcon(fileType);
+            
+            return `
+                <div class="item ${isSelected ? 'selected' : ''}" 
+                     onclick="handleItemClick(event, '${escapedNameForJs}', false, '${escapedUrlForJs}', ${JSON.stringify(item)})"
+                     data-path="${escapeHtml(item.path)}"
+                     data-type="file"
+                     data-url="${escapedUrlForJs}"
+                     data-name="${escapedNameForJs}"
+                     data-item='${escapeJsString(JSON.stringify(item))}'>
+                    <div class="item-preview">
+                        ${isImage ? 
+                            `<img src="${escapeHtml(escapedUrlForJs)}" 
+                                  alt="${safeName}"
+                                  loading="lazy"
+                                  onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'file-icon ${fileType}\\'>${icon}</div>';">` :
+                            `<div class="file-icon ${fileType}">${icon}</div>`
+                        }
+                    </div>
+                    <div class="item-info">
+                        <div class="item-name" title="${safeName}">${safeName}</div>
+                        <div class="item-details">
+                            <div class="item-size">${formatFileSize(item.size)}</div>
+                            <div class="item-type">${getFileExtension(item.name)}</div>
                         </div>
                     </div>
-                `;
-            } else {
-                return `
-                    <div class="item" onclick="sendFileViaBot('${escapedNameForJs}', '${escapedUrlForJs}')">
-                        <div class="file-icon">📄</div>
-                        <div class="item-info">
-                            <div class="item-name" title="${safeName}">${safeName}</div>
-                            <div class="item-details">
-                                <div class="item-size">${formatFileSize(item.size)}</div>
-                                <div class="item-type">${getFileExtension(item.name)}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
+                    <div class="selection-indicator">✓</div>
+                </div>
+            `;
         }
         
-        // Экранирование для HTML
+        // Получение иконки для файла
+        function getFileIcon(type) {
+            const icons = {
+                image: '🖼️',
+                audio: '🎵',
+                video: '🎬',
+                archive: '📦',
+                document: '📄',
+                default: '📄'
+            };
+            return icons[type] || icons.default;
+        }
+        
+        // Категория файла
+        function getFileCategory(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            
+            const imageExt = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg', 'ico'];
+            const audioExt = ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac'];
+            const videoExt = ['mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv'];
+            const archiveExt = ['zip', 'rar', '7z', 'tar', 'gz'];
+            const documentExt = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'rtf'];
+            
+            if (imageExt.includes(ext)) return 'image';
+            if (audioExt.includes(ext)) return 'audio';
+            if (videoExt.includes(ext)) return 'video';
+            if (archiveExt.includes(ext)) return 'archive';
+            if (documentExt.includes(ext)) return 'document';
+            return 'default';
+        }
+        
+        // Экранирование
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
         
-        // Экранирование для JavaScript строки
         function escapeJsString(text) {
             return text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+        }
+        
+        // Обработка клика по элементу
+        function handleItemClick(event, name, isFolder, url, item) {
+            if (selectionMode) {
+                toggleSelection(event.currentTarget.dataset.path);
+                return;
+            }
+            
+            if (isFolder) {
+                openFolder(name);
+            } else {
+                addToQueue(item || JSON.parse(event.currentTarget.dataset.item));
+            }
         }
         
         // Открытие папки
@@ -822,105 +1326,203 @@
             loadFolderContents(newPath);
         }
         
-        // НОВАЯ ФУНКЦИЯ: Отправка файла через бота
-        async function sendFileViaBot(filename, url) {
-            if (isDownloading) {
-                tg.showPopup({
-                    title: 'Отправка',
-                    message: 'Файл уже отправляется, подождите...',
-                    buttons: [{type: 'ok'}]
-                });
+        // Переключение режима выделения
+        function toggleSelectionMode() {
+            selectionMode = !selectionMode;
+            document.body.classList.toggle('selection-mode', selectionMode);
+            document.getElementById('selection-panel').classList.toggle('visible', selectionMode);
+            
+            if (!selectionMode) {
+                clearSelection();
+            }
+        }
+        
+        // Переключение выделения
+        function toggleSelection(path) {
+            if (selectedItems.has(path)) {
+                selectedItems.delete(path);
+            } else {
+                selectedItems.add(path);
+            }
+            
+            updateSelectionDisplay();
+        }
+        
+        // Выделить все
+        function selectAll() {
+            const items = document.querySelectorAll('.item[data-type="file"]');
+            items.forEach(item => {
+                selectedItems.add(item.dataset.path);
+            });
+            updateSelectionDisplay();
+        }
+        
+        // Очистить выделение
+        function clearSelection() {
+            selectedItems.clear();
+            updateSelectionDisplay();
+        }
+        
+        // Добавить выделенные в очередь
+        function addSelectedToQueue() {
+            const items = document.querySelectorAll('.item[data-type="file"][data-path]');
+            items.forEach(item => {
+                if (selectedItems.has(item.dataset.path)) {
+                    try {
+                        const itemData = JSON.parse(item.dataset.item);
+                        addToQueue(itemData, true); // silent mode
+                    } catch (e) {
+                        console.warn('Ошибка парсинга данных элемента', e);
+                    }
+                }
+            });
+            
+            showNotification(`📥 Добавлено в очередь: ${selectedItems.size} файлов`, 'success');
+            clearSelection();
+            toggleSelectionMode();
+        }
+        
+        // Обновление отображения выделения
+        function updateSelectionDisplay() {
+            // Обновляем классы элементов
+            document.querySelectorAll('.item').forEach(item => {
+                if (selectedItems.has(item.dataset.path)) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+            
+            // Обновляем счетчик
+            document.getElementById('selection-count').textContent = `Выбрано: ${selectedItems.size}`;
+        }
+        
+        // Очередь файлов
+        
+        // Добавление в очередь
+        function addToQueue(item, silent = false) {
+            if (!item) return;
+            
+            const queueItem = {
+                id: Date.now() + Math.random(),
+                name: item.name,
+                url: item.download_url || `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`,
+                status: 'pending',
+                item: item
+            };
+            
+            fileQueue.push(queueItem);
+            updateQueueDisplay();
+            
+            if (!silent) {
+                showNotification(`📥 "${item.name}" добавлен в очередь`, 'info');
+            }
+            
+            if (!isProcessing) {
+                processQueue();
+            }
+        }
+        
+        // Обработка очереди
+        async function processQueue() {
+            if (fileQueue.length === 0) {
+                isProcessing = false;
                 return;
             }
             
-            const overlay = document.getElementById('download-overlay');
-            overlay.classList.add('show');
+            isProcessing = true;
             
-            isDownloading = true;
+            const currentItem = fileQueue.find(item => item.status === 'pending');
+            if (!currentItem) {
+                isProcessing = false;
+                return;
+            }
+            
+            currentItem.status = 'sending';
+            updateQueueDisplay();
             
             try {
-                // Получаем ID пользователя
-                const userId = tg.initDataUnsafe?.user?.id;
-                
-                if (!userId) {
-                    // Если не удалось получить ID (например, в браузере)
-                    tg.showPopup({
-                        title: 'Ошибка',
-                        message: 'Не удалось определить ваш Telegram ID. Открываем файл в браузере?',
-                        buttons: [
-                            {type: 'default', text: 'Открыть'},
-                            {type: 'cancel'}
-                        ]
-                    }, (buttonId) => {
-                        if (buttonId === 'ok') {
-                            window.open(url, '_blank');
-                        }
-                    });
-                    return;
-                }
-                
-                // Скачиваем файл с GitHub
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Ошибка загрузки файла');
-                
-                const blob = await response.blob();
-                
-                // Создаем FormData для отправки боту
-                const formData = new FormData();
-                formData.append('chat_id', userId);
-                formData.append('document', blob, filename);
-                
-                // Отправляем файл через бота
-                const botResponse = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await botResponse.json();
-                
-                if (result.ok) {
-                    // Успешно отправили
-                    tg.showPopup({
-                        title: '✅ Файл отправлен!',
-                        message: `Файл "${filename}" отправлен в чат с ботом @${BOT_USERNAME}`,
-                        buttons: [
-                            {type: 'default', text: 'Перейти в чат'},
-                            {type: 'ok', text: 'ОК'}
-                        ]
-                    }, (buttonId) => {
-                        if (buttonId === 'ok') {
-                            tg.close();
-                        } else {
-                            // Открываем чат с ботом
-                            tg.openTelegramLink(`https://t.me/${BOT_USERNAME}`);
-                        }
-                    });
-                } else {
-                    throw new Error(result.description || 'Ошибка отправки');
-                }
-                
+                await sendFileViaBot(currentItem.item, currentItem.url);
+                currentItem.status = 'completed';
+                showNotification(`✅ "${currentItem.name}" отправлен`, 'success');
             } catch (error) {
-                console.error('Ошибка отправки через бота:', error);
-                
-                tg.showPopup({
-                    title: '❌ Ошибка',
-                    message: 'Не удалось отправить файл. Открыть в браузере?',
-                    buttons: [
-                        {type: 'default', text: 'Открыть'},
-                        {type: 'cancel'}
-                    ]
-                }, (buttonId) => {
-                    if (buttonId === 'ok') {
-                        window.open(url, '_blank');
-                    }
-                });
-                
-            } finally {
-                setTimeout(() => {
-                    overlay.classList.remove('show');
-                    isDownloading = false;
-                }, 1500);
+                console.error('Ошибка отправки:', error);
+                currentItem.status = 'error';
+                showNotification(`❌ Ошибка: "${currentItem.name}"`, 'error');
             }
+            
+            updateQueueDisplay();
+            
+            // Продолжаем обработку
+            setTimeout(() => processQueue(), 500);
+        }
+        
+        // Отправка через бота
+        async function sendFileViaBot(item, url) {
+            const userId = tg.initDataUnsafe?.user?.id;
+            
+            if (!userId) {
+                throw new Error('Нет ID пользователя');
+            }
+            
+            // Скачиваем файл
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Ошибка загрузки файла');
+            
+            const blob = await response.blob();
+            
+            // Отправляем боту
+            const formData = new FormData();
+            formData.append('chat_id', userId);
+            formData.append('document', blob, item.name);
+            
+            const botResponse = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await botResponse.json();
+            
+            if (!result.ok) {
+                throw new Error(result.description);
+            }
+        }
+        
+        // Обновление отображения очереди
+        function updateQueueDisplay() {
+            const queueList = document.getElementById('queue-list');
+            const badge = document.getElementById('queue-badge');
+            
+            const pendingCount = fileQueue.filter(item => item.status === 'pending' || item.status === 'sending').length;
+            badge.textContent = pendingCount;
+            
+            if (fileQueue.length === 0) {
+                queueList.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--hint-color);">Очередь пуста</div>';
+                return;
+            }
+            
+            queueList.innerHTML = fileQueue.map(item => `
+                <div class="queue-item">
+                    <div class="queue-item-status ${item.status}"></div>
+                    <div class="queue-item-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
+                    <div>${item.status === 'completed' ? '✅' : item.status === 'error' ? '❌' : ''}</div>
+                </div>
+            `).join('');
+        }
+        
+        // Переключение отображения очереди
+        function toggleQueue() {
+            document.getElementById('queue-panel').classList.toggle('visible');
+        }
+        
+        // Очистка очереди
+        function clearQueue() {
+            fileQueue = fileQueue.filter(item => item.status === 'sending');
+            if (fileQueue.length === 0) {
+                isProcessing = false;
+            }
+            updateQueueDisplay();
+            showNotification('🧹 Очередь очищена', 'info');
         }
         
         // Обработчик поиска
@@ -964,6 +1566,8 @@
         // Элемент результата поиска
         function createSearchResultElement(item) {
             const isImage = isImageFile(item.name);
+            const fileType = getFileCategory(item.name);
+            const icon = getFileIcon(fileType);
             const rawUrl = item.download_url || 
                           `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`;
             
@@ -971,38 +1575,26 @@
             const escapedNameForJs = escapeJsString(item.name);
             const escapedUrlForJs = escapeJsString(rawUrl);
             
-            if (isImage) {
-                return `
-                    <div class="item" onclick="sendFileViaBot('${escapedNameForJs}', '${escapedUrlForJs}')">
-                        <div class="item-preview">
-                            <img src="${escapeHtml(rawUrl)}" 
-                                 alt="${safeName}"
-                                 loading="lazy"
-                                 onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'file-icon\\'>📄</div>';">
-                        </div>
-                        <div class="item-info">
-                            <div class="item-name" title="${safeName}">${safeName}</div>
-                            <div class="item-details">
-                                <div class="item-size">${formatFileSize(item.size)}</div>
-                                <div class="item-type">${getFileExtension(item.name)}</div>
-                            </div>
+            return `
+                <div class="item" onclick='addToQueue(${escapeJsString(JSON.stringify(item))})'>
+                    <div class="item-preview">
+                        ${isImage ? 
+                            `<img src="${escapeHtml(rawUrl)}" 
+                                  alt="${safeName}"
+                                  loading="lazy"
+                                  onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'file-icon ${fileType}\\'>${icon}</div>';">` :
+                            `<div class="file-icon ${fileType}">${icon}</div>`
+                        }
+                    </div>
+                    <div class="item-info">
+                        <div class="item-name" title="${safeName}">${safeName}</div>
+                        <div class="item-details">
+                            <div class="item-size">${formatFileSize(item.size)}</div>
+                            <div class="item-type">${getFileExtension(item.name)}</div>
                         </div>
                     </div>
-                `;
-            } else {
-                return `
-                    <div class="item" onclick="sendFileViaBot('${escapedNameForJs}', '${escapedUrlForJs}')">
-                        <div class="file-icon">📄</div>
-                        <div class="item-info">
-                            <div class="item-name" title="${safeName}">${safeName}</div>
-                            <div class="item-details">
-                                <div class="item-size">${formatFileSize(item.size)}</div>
-                                <div class="item-type">${getFileExtension(item.name)}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
+                </div>
+            `;
         }
         
         // Вспомогательные функции
