@@ -2,8 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brawl Stars Fankit</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -24,10 +23,6 @@
             --secondary-bg-color: #f0f0f0;
             --border-color: #e0e0e0;
             --card-bg: #ffffff;
-            --header-bg: #ffffff;
-            --banner-bg: #40a7e3;
-            --selected-color: rgba(64, 167, 227, 0.3);
-            --queue-bg: #2c2c2c;
         }
 
         body.dark {
@@ -40,27 +35,20 @@
             --secondary-bg-color: #2c2c2c;
             --border-color: #3a3a3a;
             --card-bg: #2c2c2c;
-            --header-bg: #2c2c2c;
-            --banner-bg: #40a7e3;
-            --selected-color: rgba(64, 167, 227, 0.5);
-            --queue-bg: #1a1a1a;
         }
 
         body {
             background: var(--bg-color);
             color: var(--text-color);
-            line-height: 1.4;
-            transition: background-color 0.2s ease, color 0.2s ease;
         }
 
-        /* Хедер */
         .header {
             padding: 15px 20px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             gap: 15px;
-            background: var(--header-bg);
+            background: var(--card-bg);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -70,45 +58,13 @@
             width: 40px;
             height: 40px;
             border-radius: 8px;
-            object-fit: contain;
         }
 
         .title {
             font-size: 24px;
             font-weight: 600;
-            color: var(--text-color);
         }
 
-        /* Баннер Telegram */
-        .telegram-banner {
-            background: var(--banner-bg);
-            padding: 12px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: opacity 0.2s;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .telegram-banner:hover {
-            opacity: 0.9;
-        }
-
-        .telegram-banner a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .telegram-banner span {
-            font-size: 20px;
-        }
-
-        /* Панель навигации */
         .nav-panel {
             padding: 15px 20px;
             background: var(--secondary-bg-color);
@@ -116,23 +72,16 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            flex-wrap: wrap;
         }
 
         .back-button {
             color: var(--link-color);
             background: none;
             border: none;
-            cursor: pointer;
             font-size: 16px;
             padding: 8px 12px;
-            border-radius: 8px;
             display: none;
-            transition: background-color 0.2s;
-        }
-
-        .back-button:hover {
-            background: rgba(64, 167, 227, 0.1);
+            cursor: pointer;
         }
 
         .back-button.visible {
@@ -142,49 +91,34 @@
         .path-indicator {
             font-size: 14px;
             color: var(--hint-color);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            flex: 1;
         }
 
-        /* Панель фильтров */
-        .filter-panel {
+        .toolbar {
             padding: 10px 20px;
             background: var(--secondary-bg-color);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-            align-items: center;
         }
 
-        .filter-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
+        .toolbar button {
             padding: 8px 15px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
             border-radius: 20px;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
 
-        .filter-btn.active {
+        .toolbar button.active {
             background: var(--link-color);
             color: white;
             border-color: var(--link-color);
         }
 
-        .filter-btn:hover {
-            border-color: var(--link-color);
-        }
-
-        /* Панель выделения */
-        .selection-panel {
+        .selection-bar {
             padding: 10px 20px;
             background: var(--link-color);
             color: white;
@@ -192,103 +126,51 @@
             align-items: center;
             justify-content: space-between;
             position: sticky;
-            top: 60px;
+            top: 70px;
             z-index: 99;
         }
 
-        .selection-panel.visible {
+        .selection-bar.visible {
             display: flex;
-        }
-
-        .selection-count {
-            font-weight: 500;
         }
 
         .selection-actions {
             display: flex;
-            gap: 15px;
+            gap: 10px;
         }
 
-        .selection-btn {
-            background: rgba(255, 255, 255, 0.2);
+        .selection-actions button {
+            background: rgba(255,255,255,0.2);
             border: none;
             color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
+            padding: 5px 15px;
+            border-radius: 15px;
             cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: background 0.2s;
         }
 
-        .selection-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .selection-btn.danger {
-            background: rgba(255, 0, 0, 0.3);
-        }
-
-        .selection-btn.danger:hover {
-            background: rgba(255, 0, 0, 0.4);
-        }
-
-        /* Поиск */
         .search-container {
             padding: 20px;
             background: var(--secondary-bg-color);
             border-bottom: 1px solid var(--border-color);
         }
 
-        .search-box {
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-        }
-
         .search-input {
             width: 100%;
-            padding: 12px 20px 12px 48px;
+            padding: 12px 20px;
             font-size: 16px;
             border: 1px solid var(--border-color);
             border-radius: 10px;
             background: var(--card-bg);
             color: var(--text-color);
-            transition: all 0.2s ease;
         }
 
-        .search-input:focus {
-            outline: none;
-            border-color: var(--link-color);
-            box-shadow: 0 0 0 3px rgba(64, 167, 227, 0.2);
-        }
-
-        .search-input::placeholder {
-            color: var(--hint-color);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--hint-color);
-            font-size: 20px;
-        }
-
-        /* Контейнер */
         .container {
             padding: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
         }
 
-        /* Сетка */
-        .content-grid {
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 15px;
         }
 
@@ -297,104 +179,22 @@
             border: 2px solid var(--border-color);
             border-radius: 12px;
             overflow: hidden;
-            transition: all 0.2s ease;
-            position: relative;
             cursor: pointer;
+            position: relative;
         }
 
         .item.selected {
             border-color: var(--link-color);
-            background: var(--selected-color);
-            transform: scale(0.98);
+            background: rgba(64, 167, 227, 0.1);
         }
 
-        .item:hover {
-            border-color: var(--link-color);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-        }
-
-        /* Стили для папки */
-        .folder {
-            position: relative;
-        }
-
-        .folder-preview-grid {
-            width: 100%;
-            height: 140px;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 2px;
-            background: var(--secondary-bg-color);
-            position: relative;
-        }
-
-        .folder-preview-item {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .item.folder {
             background: var(--secondary-bg-color);
         }
 
-        .folder-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 5px;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            backdrop-filter: blur(3px);
-            z-index: 2;
-        }
-
-        .folder-overlay span {
-            font-size: 40px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-        }
-
-        .folder-name {
-            font-size: 14px;
-            font-weight: 500;
-            max-width: 90%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            padding: 5px 10px;
-            background: rgba(0,0,0,0.6);
-            border-radius: 20px;
-            backdrop-filter: blur(5px);
-        }
-
-        .item-preview {
+        .preview {
             width: 100%;
-            height: 140px;
-            background: var(--secondary-bg-color);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .item-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .item:hover .item-preview img {
-            transform: scale(1.05);
-        }
-
-        .file-icon {
-            width: 100%;
-            height: 140px;
+            height: 120px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -402,282 +202,83 @@
             background: var(--secondary-bg-color);
         }
 
-        .file-icon.image {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .file-icon.audio {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-
-        .file-icon.video {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-
-        .file-icon.archive {
-            background: linear-gradient(135deg, #f9d423 0%, #f83600 100%);
-            color: white;
-        }
-
-        .file-icon.document {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            color: #333;
-        }
-
-        .item-info {
-            padding: 12px 15px;
+        .info {
+            padding: 10px;
             border-top: 1px solid var(--border-color);
-            background: var(--card-bg);
         }
 
-        .item-name {
-            font-weight: 500;
+        .name {
             font-size: 14px;
-            margin-bottom: 5px;
+            font-weight: 500;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: var(--text-color);
+            margin-bottom: 5px;
         }
 
-        .item-details {
+        .meta {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-        }
-
-        .item-size {
             font-size: 12px;
             color: var(--hint-color);
         }
 
-        .item-type {
-            font-size: 12px;
-            color: var(--hint-color);
-            text-transform: uppercase;
-        }
-
-        /* Индикатор выбора */
-        .selection-indicator {
+        .check {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 5px;
+            right: 5px;
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background: rgba(0,0,0,0.5);
-            border: 2px solid white;
+            background: var(--link-color);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
             font-size: 14px;
-            font-weight: bold;
-            z-index: 10;
             opacity: 0;
-            transition: opacity 0.2s;
         }
 
-        .item.selected .selection-indicator {
+        .item.selected .check {
             opacity: 1;
-            background: var(--link-color);
-        }
-
-        .selection-mode .selection-indicator {
-            opacity: 0.5;
-        }
-
-        .selection-mode .item:hover .selection-indicator {
-            opacity: 1;
-        }
-
-        /* Состояния */
-        .loading, .empty {
-            text-align: center;
-            padding: 60px 40px;
-            color: var(--hint-color);
-            grid-column: 1 / -1;
-            font-size: 16px;
-        }
-
-        .loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border-color);
-            border-top-color: var(--link-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Результаты поиска */
-        .search-results-title {
-            font-size: 18px;
-            font-weight: 500;
-            margin: 0 0 20px;
-            color: var(--text-color);
-        }
-
-        /* Уведомления */
-        .notification-container {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 90%;
-            max-width: 400px;
-            pointer-events: none;
-        }
-
-        .notification {
-            background: var(--button-color);
-            color: var(--button-text-color);
-            padding: 12px 24px;
-            border-radius: 30px;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            animation: slideIn 0.3s ease;
-            pointer-events: auto;
-            backdrop-filter: blur(10px);
-        }
-
-        .notification.success {
-            background: #4CAF50;
-        }
-
-        .notification.error {
-            background: #f44336;
-        }
-
-        .notification.warning {
-            background: #ff9800;
-        }
-
-        .notification.info {
-            background: var(--link-color);
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* Очередь */
-        .queue-container {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 1000;
-        }
-
-        .queue-toggle {
-            background: var(--button-color);
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 25px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
-            position: relative;
-        }
-
-        .queue-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .queue-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #f44336;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .queue-panel {
             position: fixed;
-            bottom: 80px;
+            bottom: 20px;
             left: 20px;
-            width: 300px;
-            max-height: 400px;
-            background: var(--queue-bg);
+            right: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--card-bg);
             border-radius: 15px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
             border: 1px solid var(--border-color);
+            display: none;
+            z-index: 1000;
         }
 
         .queue-panel.visible {
-            display: flex;
+            display: block;
         }
 
         .queue-header {
             padding: 15px;
-            background: var(--secondary-bg-color);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .queue-header h3 {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .queue-clear {
-            background: none;
-            border: none;
-            color: var(--hint-color);
-            cursor: pointer;
-            font-size: 20px;
-        }
-
         .queue-list {
-            flex: 1;
-            overflow-y: auto;
             max-height: 300px;
+            overflow-y: auto;
             padding: 10px;
         }
 
@@ -687,936 +288,519 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 14px;
         }
 
         .queue-item:last-child {
             border-bottom: none;
         }
 
-        .queue-item-status {
-            width: 20px;
-            height: 20px;
+        .queue-status {
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            flex-shrink: 0;
         }
 
-        .queue-item-status.pending {
-            background: #ff9800;
-        }
-
-        .queue-item-status.sending {
-            background: var(--link-color);
-            animation: pulse 1s infinite;
-        }
-
-        .queue-item-status.completed {
-            background: #4CAF50;
-        }
-
-        .queue-item-status.error {
-            background: #f44336;
-        }
-
-        .queue-item-name {
-            flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+        .queue-status.pending { background: #ff9800; }
+        .queue-status.sending { background: #2196F3; animation: pulse 1s infinite; }
+        .queue-status.done { background: #4CAF50; }
+        .queue-status.error { background: #f44336; }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
 
-        /* Адаптивность */
-        @media (max-width: 768px) {
-            .content-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 12px;
-            }
-            
-            .item-preview,
-            .folder-preview-grid,
-            .file-icon {
-                height: 120px;
-            }
+        .queue-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: var(--link-color);
+            color: white;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 999;
+        }
 
-            .queue-panel {
-                left: 10px;
-                right: 10px;
-                width: auto;
-            }
+        .queue-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            font-size: 12px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--link-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: slideUp 0.3s;
+            white-space: nowrap;
+        }
+
+        @keyframes slideUp {
+            from { transform: translate(-50%, 100%); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: var(--hint-color);
+            grid-column: 1/-1;
         }
     </style>
 </head>
 <body>
-    <!-- Хедер -->
     <div class="header">
         <img src="https://raw.githubusercontent.com/bahrfankit/bahrfankit.github.io/main/files/GameLogo.png" 
-             alt="Brawl Stars" 
-             class="avatar"
-             onerror="this.src='https://via.placeholder.com/40?text=BS'">
+             alt="BS" class="avatar" onerror="this.src='data:image/svg+xml,...'">
         <div class="title">Brawl Stars Fankit</div>
     </div>
-    
-    <!-- Баннер Telegram -->
-    <div class="telegram-banner" id="telegram-banner" onclick="window.open('https://t.me/bahrfankit', '_blank')">
-        <a href="https://t.me/bahrfankit" target="_blank">
-            <span>📱</span> Подпишись на наш Telegram канал!
-        </a>
-    </div>
-    
-    <!-- Панель навигации -->
+
     <div class="nav-panel">
-        <button class="back-button" id="back-button" onclick="goBack()">← Назад</button>
-        <span class="path-indicator" id="path-indicator"></span>
-        <button class="filter-btn" id="selection-mode-btn" onclick="toggleSelectionMode()">
-            <span>☑️</span> Выбрать
-        </button>
+        <button class="back-button" id="backBtn" onclick="goBack()">← Назад</button>
+        <span class="path-indicator" id="pathIndicator">Корневая папка</span>
     </div>
 
-    <!-- Панель выделения -->
-    <div class="selection-panel" id="selection-panel">
-        <span class="selection-count" id="selection-count">Выбрано: 0</span>
+    <div class="toolbar">
+        <button id="selectBtn" onclick="toggleSelectMode()">☑️ Выбрать</button>
+        <button id="sortNameBtn" onclick="setSort('name')" class="active">📝 По названию</button>
+        <button id="sortDateBtn" onclick="setSort('date')">📅 По дате</button>
+    </div>
+
+    <div class="selection-bar" id="selectionBar">
+        <span id="selectionCount">Выбрано: 0</span>
         <div class="selection-actions">
-            <button class="selection-btn" onclick="addSelectedToQueue()">
-                <span>➕</span> В очередь
-            </button>
-            <button class="selection-btn" onclick="selectAll()">
-                <span>✓</span> Всё
-            </button>
-            <button class="selection-btn danger" onclick="clearSelection()">
-                <span>✕</span> Отмена
-            </button>
+            <button onclick="addSelectedToQueue()">➕ В очередь</button>
+            <button onclick="selectAll()">✓ Всё</button>
+            <button onclick="cancelSelect()">✕ Отмена</button>
         </div>
     </div>
-    
-    <!-- Панель фильтров -->
-    <div class="filter-panel">
-        <button class="filter-btn" id="filter-name" onclick="setSort('name')">
-            <span>📝</span> По названию
-        </button>
-        <button class="filter-btn" id="filter-date" onclick="setSort('date')">
-            <span>📅</span> По дате
-        </button>
-    </div>
-    
-    <!-- Поиск -->
+
     <div class="search-container">
-        <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" 
-                   class="search-input" 
-                   placeholder="Поиск файлов..."
-                   id="search-input">
-        </div>
+        <input type="text" class="search-input" id="searchInput" placeholder="🔍 Поиск...">
     </div>
-    
-    <!-- Основной контент -->
+
     <div class="container">
-        <!-- Основной контент (папки) -->
-        <div id="main-content">
-            <div id="content" class="content-grid">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    Загрузка...
-                </div>
-            </div>
-        </div>
-        
-        <!-- Результаты поиска -->
-        <div id="search-results" style="display: none;">
-            <div class="search-results-title" id="search-results-title"></div>
-            <div class="content-grid" id="search-results-grid"></div>
+        <div class="grid" id="content">
+            <div class="loading">Загрузка...</div>
         </div>
     </div>
 
-    <!-- Уведомления -->
-    <div class="notification-container" id="notification-container"></div>
+    <button class="queue-toggle" id="queueToggle" onclick="toggleQueue()">
+        📋
+        <span class="queue-badge" id="queueBadge">0</span>
+    </button>
 
-    <!-- Очередь -->
-    <div class="queue-container">
-        <button class="queue-toggle" id="queue-toggle" onclick="toggleQueue()">
-            <span>📋</span>
-            <span class="queue-badge" id="queue-badge">0</span>
-        </button>
-        <div class="queue-panel" id="queue-panel">
-            <div class="queue-header">
-                <h3>Очередь отправки</h3>
-                <button class="queue-clear" onclick="clearQueue()">✕</button>
-            </div>
-            <div class="queue-list" id="queue-list">
-                <!-- Элементы очереди будут добавляться сюда -->
-            </div>
+    <div class="queue-panel" id="queuePanel">
+        <div class="queue-header">
+            <span>Очередь отправки</span>
+            <button onclick="clearQueue()" style="background:none; border:none; color:var(--hint-color); font-size:20px; cursor:pointer;">✕</button>
         </div>
+        <div class="queue-list" id="queueList"></div>
     </div>
 
     <script>
-        // Инициализация Telegram Web App
+        // Telegram App
         const tg = window.Telegram.WebApp;
-        
-        // Расширяем на весь экран
         tg.expand();
-        
-        // Конфигурация бота
-        const BOT_TOKEN = '8668575732:AAGUos5ba8yDrzj6w42Sb8pRU4GRl3aCK9o';
-        const BOT_USERNAME = 'bahrfankit_bot';
-        
-        // Применяем тему Telegram
-        function applyTelegramTheme() {
-            const isDark = tg.colorScheme === 'dark';
-            document.body.classList.toggle('dark', isDark);
-            
-            const root = document.documentElement;
-            if (tg.themeParams) {
-                root.style.setProperty('--bg-color', tg.themeParams.bg_color || (isDark ? '#1f1f1f' : '#ffffff'));
-                root.style.setProperty('--text-color', tg.themeParams.text_color || (isDark ? '#ffffff' : '#000000'));
-                root.style.setProperty('--hint-color', tg.themeParams.hint_color || (isDark ? '#aaaaaa' : '#999999'));
-                root.style.setProperty('--link-color', tg.themeParams.link_color || '#40a7e3');
-                root.style.setProperty('--button-color', tg.themeParams.button_color || '#40a7e3');
-                root.style.setProperty('--button-text-color', tg.themeParams.button_text_color || '#ffffff');
-                root.style.setProperty('--secondary-bg-color', tg.themeParams.secondary_bg_color || (isDark ? '#2c2c2c' : '#f0f0f0'));
-            }
-        }
-        
-        applyTelegramTheme();
-        tg.onEvent('themeChanged', applyTelegramTheme);
 
-        // Конфигурация GitHub
-        const REPO_OWNER = 'bahrfankit';
-        const REPO_NAME = 'bahrfankit.github.io';
-        const START_PATH = 'files';
+        // Bot config
+        const BOT_TOKEN = '8668575732:AAGUos5ba8yDrzj6w42Sb8pRU4GRl3aCK9o';
         
-        // Переменные
-        let allFilesCache = [];
-        let currentFolderFiles = [];
+        // GitHub config
+        const REPO = 'bahrfankit/bahrfankit.github.io';
+        const BASE_PATH = 'files';
+
+        // State
         let currentPath = '';
-        let folderPreviewsCache = new Map();
-        
-        // Очередь файлов
-        let fileQueue = [];
+        let items = [];
+        let allItems = [];
+        let selectedPaths = new Set();
+        let selectMode = false;
+        let sortBy = 'name';
+        let queue = [];
         let isProcessing = false;
-        
-        // Выделение
-        let selectedItems = new Set();
-        let selectionMode = false;
-        
-        // Сортировка
-        let currentSort = 'name'; // 'name' или 'date'
-        
-        // Загружаем содержимое при запуске
+        let searchQuery = '';
+
+        // Init
         document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                await loadAllFilesForSearch();
-                await loadFolderContents('');
-            } catch (error) {
-                console.error('Ошибка инициализации:', error);
-                showNotification('❌ Не удалось загрузить содержимое', 'error');
-            }
+            await loadAllItems();
+            await loadFolder('');
         });
-        
-        // Показать уведомление
-        function showNotification(message, type = 'info') {
-            const container = document.getElementById('notification-container');
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `<span>${message}</span>`;
-            
-            container.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.animation = 'slideIn 0.3s reverse';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
-        
-        // Обновление видимости баннера
-        function updateBannerVisibility() {
-            const banner = document.getElementById('telegram-banner');
-            if (currentPath === '') {
-                banner.style.display = 'block';
-            } else {
-                banner.style.display = 'none';
-            }
-        }
-        
-        // Загрузка всех файлов для поиска
-        async function loadAllFilesForSearch() {
+
+        // Load all items for search
+        async function loadAllItems() {
             try {
-                const contents = await getGitHubContentsRecursive(START_PATH);
-                allFilesCache = contents.filter(item => item.type === 'file');
-            } catch (error) {
-                console.error('Ошибка загрузки файлов для поиска:', error);
-                allFilesCache = [];
+                allItems = await getAllFiles();
+            } catch (e) {
+                console.error('Search cache error:', e);
             }
         }
-        
-        // Загрузка содержимого папки
-        async function loadFolderContents(path) {
-            currentPath = path;
-            
-            // Обновляем видимость баннера
-            updateBannerVisibility();
-            
-            // Обновляем индикатор пути
-            updatePathIndicator();
-            
-            // Обновляем кнопку назад
-            updateBackButton();
-            
-            // Очищаем выделение
-            clearSelection();
-            
-            // Показываем загрузку
-            document.getElementById('content').innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    Загрузка...
-                </div>
-            `;
-            document.getElementById('search-results').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-            
+
+        async function getAllFiles(path = BASE_PATH) {
+            const files = [];
             try {
-                const fullPath = path ? `${START_PATH}/${path}` : START_PATH;
-                const contents = await getGitHubContents(fullPath);
-                
-                currentFolderFiles = contents;
-                
-                // Загружаем превью для папок
-                await loadFolderPreviews(contents);
-                
-                // Сортируем и отображаем
-                sortContents();
-                
-            } catch (error) {
-                console.error('Ошибка загрузки:', error);
-                if (error.message.includes('404')) {
-                    showNotification('📁 Папка не найдена', 'error');
-                } else {
-                    showNotification('❌ Ошибка загрузки содержимого', 'error');
-                }
-            }
-        }
-        
-        // Сортировка содержимого
-        function sortContents() {
-            const sorted = [...currentFolderFiles].sort((a, b) => {
-                // Сначала папки, потом файлы
-                if (a.type !== b.type) {
-                    return a.type === 'dir' ? -1 : 1;
-                }
-                
-                // Затем сортировка по выбранному критерию
-                if (currentSort === 'name') {
-                    return a.name.localeCompare(b.name);
-                } else if (currentSort === 'date') {
-                    // Для GitHub API дата может быть в разных местах
-                    const dateA = new Date(a.last_modified || a.created_at || 0);
-                    const dateB = new Date(b.last_modified || b.created_at || 0);
-                    return dateB - dateA; // Сначала новые
-                }
-            });
-            
-            displayContents(sorted);
-        }
-        
-        // Установка сортировки
-        function setSort(type) {
-            currentSort = type;
-            
-            // Обновляем активную кнопку
-            document.getElementById('filter-name').classList.toggle('active', type === 'name');
-            document.getElementById('filter-date').classList.toggle('active', type === 'date');
-            
-            // Применяем сортировку
-            sortContents();
-        }
-        
-        // Загрузка превью для папок
-        async function loadFolderPreviews(contents) {
-            const folders = contents.filter(item => item.type === 'dir');
-            
-            for (const folder of folders) {
-                if (!folderPreviewsCache.has(folder.path)) {
-                    try {
-                        const folderPath = folder.path;
-                        const folderContents = await getGitHubContents(folderPath);
-                        
-                        // Берем первые 4 изображения для превью
-                        const images = folderContents
-                            .filter(item => item.type === 'file' && isImageFile(item.name))
-                            .slice(0, 4);
-                        
-                        const previewUrls = images.map(img => 
-                            img.download_url || `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${img.path}`
-                        );
-                        
-                        folderPreviewsCache.set(folder.path, previewUrls);
-                    } catch (error) {
-                        console.warn(`Не удалось загрузить превью для ${folder.path}:`, error);
-                        folderPreviewsCache.set(folder.path, []);
-                    }
-                }
-            }
-        }
-        
-        // Обновление индикатора пути
-        function updatePathIndicator() {
-            const indicator = document.getElementById('path-indicator');
-            if (currentPath === '') {
-                indicator.textContent = 'Корневая папка';
-            } else {
-                indicator.textContent = currentPath;
-            }
-        }
-        
-        // Обновление кнопки назад
-        function updateBackButton() {
-            const backButton = document.getElementById('back-button');
-            
-            if (currentPath === '') {
-                backButton.classList.remove('visible');
-            } else {
-                backButton.classList.add('visible');
-            }
-        }
-        
-        // Возврат назад
-        function goBack() {
-            if (currentPath === '') return;
-            
-            const pathParts = currentPath.split('/');
-            pathParts.pop();
-            
-            const parentPath = pathParts.join('/');
-            loadFolderContents(parentPath);
-        }
-        
-        // Получение содержимого папки
-        async function getGitHubContents(path) {
-            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
-            
-            const response = await fetch(url);
-            if (!response.ok) {
-                if (response.status === 404) {
-                    throw new Error('404 Not Found');
-                }
-                throw new Error(`HTTP ${response.status}`);
-            }
-            
-            const data = await response.json();
-            
-            const seen = new Set();
-            return data.filter(item => {
-                const key = `${item.path}:${item.type}`;
-                if (seen.has(key)) return false;
-                seen.add(key);
-                return true;
-            });
-        }
-        
-        // Рекурсивное получение всех файлов для поиска
-        async function getGitHubContentsRecursive(path) {
-            try {
-                const contents = await getGitHubContents(path);
-                const result = [];
-                
-                for (const item of contents) {
+                const items = await fetchContents(path);
+                for (const item of items) {
                     if (item.type === 'dir') {
-                        try {
-                            const subContents = await getGitHubContentsRecursive(item.path);
-                            result.push(...subContents);
-                        } catch (error) {
-                            console.warn(`Не удалось загрузить папку ${item.path}:`, error);
-                        }
+                        const sub = await getAllFiles(item.path);
+                        files.push(...sub);
                     } else {
-                        result.push(item);
+                        files.push(item);
                     }
                 }
-                
-                return result;
-            } catch (error) {
-                console.warn(`Не удалось загрузить ${path}:`, error);
-                return [];
+            } catch (e) {}
+            return files;
+        }
+
+        // Load folder contents
+        async function loadFolder(path) {
+            currentPath = path;
+            document.getElementById('pathIndicator').textContent = path || 'Корневая папка';
+            document.getElementById('backBtn').classList.toggle('visible', path !== '');
+            
+            showLoading();
+            
+            try {
+                const fullPath = path ? `${BASE_PATH}/${path}` : BASE_PATH;
+                items = await fetchContents(fullPath);
+                renderItems();
+            } catch (e) {
+                showToast('Ошибка загрузки');
+                console.error(e);
             }
         }
-        
-        // Отображение содержимого
-        function displayContents(contents) {
-            const container = document.getElementById('content');
+
+        async function fetchContents(path) {
+            const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`);
+            if (!res.ok) throw new Error('Failed to load');
+            return await res.json();
+        }
+
+        // Render items
+        function renderItems() {
+            let itemsToRender = items;
             
-            if (!contents || contents.length === 0) {
-                container.innerHTML = '<div class="empty">📁 Папка пуста</div>';
-                return;
+            // Filter by search
+            if (searchQuery) {
+                itemsToRender = itemsToRender.filter(item => 
+                    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+                );
             }
             
-            container.innerHTML = contents.map(item => createItemElement(item)).join('');
-        }
-        
-        // Создание элемента
-        function createItemElement(item) {
-            const isFolder = item.type === 'dir';
-            const isImage = !isFolder && isImageFile(item.name);
-            const isSelected = selectedItems.has(item.path);
-            
-            const safeName = escapeHtml(item.name);
-            const escapedNameForJs = escapeJsString(item.name);
-            
-            if (isFolder) {
-                const previewUrls = folderPreviewsCache.get(item.path) || [];
-                return createFolderElement(item, safeName, escapedNameForJs, previewUrls, isSelected);
-            } else {
-                const rawUrl = item.download_url || 
-                              `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`;
-                const escapedUrlForJs = escapeJsString(rawUrl);
+            // Sort
+            itemsToRender.sort((a, b) => {
+                if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
+                if (sortBy === 'name') return a.name.localeCompare(b.name);
+                return 0;
+            });
+
+            const html = itemsToRender.map(item => {
+                const isFolder = item.type === 'dir';
+                const isSelected = selectedPaths.has(item.path);
+                const preview = getPreview(item);
                 
-                return createFileElement(item, safeName, escapedNameForJs, escapedUrlForJs, isImage, isSelected);
-            }
-        }
-        
-        // Создание элемента папки
-        function createFolderElement(item, safeName, escapedNameForJs, previewUrls, isSelected) {
-            let previewHtml = '';
-            
-            if (previewUrls.length > 0) {
-                const previewItems = [];
-                for (let i = 0; i < 4; i++) {
-                    if (i < previewUrls.length) {
-                        previewItems.push(`
-                            <img class="folder-preview-item" 
-                                 src="${escapeHtml(previewUrls[i])}" 
-                                 loading="lazy"
-                                 onerror="this.style.display='none';">
-                        `);
-                    } else {
-                        previewItems.push('<div class="folder-preview-item" style="background: var(--secondary-bg-color);"></div>');
-                    }
-                }
-                
-                previewHtml = `
-                    <div class="folder-preview-grid">
-                        ${previewItems.join('')}
-                        <div class="folder-overlay">
-                            <span>📁</span>
-                            <div class="folder-name" title="${safeName}">${safeName}</div>
+                return `
+                    <div class="item ${isFolder ? 'folder' : ''} ${isSelected ? 'selected' : ''}" 
+                         onclick="handleItemClick(event, '${item.path}', ${isFolder})"
+                         data-path="${item.path}">
+                        <div class="preview">
+                            ${preview}
                         </div>
+                        <div class="info">
+                            <div class="name">${escapeHtml(item.name)}</div>
+                            <div class="meta">
+                                <span>${isFolder ? '📁 Папка' : formatSize(item.size)}</span>
+                                <span>${!isFolder ? getExt(item.name) : ''}</span>
+                            </div>
+                        </div>
+                        <div class="check">✓</div>
                     </div>
                 `;
-            } else {
-                previewHtml = `
-                    <div class="folder-preview-grid">
-                        <div class="folder-preview-item" style="grid-column: 1/-1; display: flex; align-items: center; justify-content: center;">
-                            <span style="font-size: 48px; opacity: 0.5;">📁</span>
-                        </div>
-                        <div class="folder-overlay">
-                            <span>📁</span>
-                            <div class="folder-name" title="${safeName}">${safeName}</div>
-                        </div>
-                    </div>
-                `;
+            }).join('');
+            
+            document.getElementById('content').innerHTML = html || '<div class="loading">Пусто</div>';
+        }
+
+        function getPreview(item) {
+            if (item.type === 'dir') return '📁';
+            
+            const ext = item.name.split('.').pop().toLowerCase();
+            const images = ['jpg','jpeg','png','gif','webp'];
+            const audio = ['mp3','wav','ogg','m4a'];
+            const video = ['mp4','avi','mkv','mov'];
+            
+            if (images.includes(ext)) {
+                return `<img src="${item.download_url}" onerror="this.onerror=null; this.parentElement.innerHTML='📄';">`;
             }
-            
-            return `
-                <div class="item folder ${isSelected ? 'selected' : ''}" 
-                     onclick="handleItemClick(event, '${escapedNameForJs}', true)"
-                     data-path="${escapeHtml(item.path)}"
-                     data-type="folder">
-                    ${previewHtml}
-                    <div class="selection-indicator">✓</div>
-                </div>
-            `;
+            if (audio.includes(ext)) return '🎵';
+            if (video.includes(ext)) return '🎬';
+            return '📄';
         }
-        
-        // Создание элемента файла
-        function createFileElement(item, safeName, escapedNameForJs, escapedUrlForJs, isImage, isSelected) {
-            const fileType = getFileCategory(item.name);
-            const icon = getFileIcon(fileType);
-            
-            return `
-                <div class="item ${isSelected ? 'selected' : ''}" 
-                     onclick="handleItemClick(event, '${escapedNameForJs}', false, '${escapedUrlForJs}', ${JSON.stringify(item)})"
-                     data-path="${escapeHtml(item.path)}"
-                     data-type="file"
-                     data-url="${escapedUrlForJs}"
-                     data-name="${escapedNameForJs}"
-                     data-item='${escapeJsString(JSON.stringify(item))}'>
-                    <div class="item-preview">
-                        ${isImage ? 
-                            `<img src="${escapeHtml(escapedUrlForJs)}" 
-                                  alt="${safeName}"
-                                  loading="lazy"
-                                  onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'file-icon ${fileType}\\'>${icon}</div>';">` :
-                            `<div class="file-icon ${fileType}">${icon}</div>`
-                        }
-                    </div>
-                    <div class="item-info">
-                        <div class="item-name" title="${safeName}">${safeName}</div>
-                        <div class="item-details">
-                            <div class="item-size">${formatFileSize(item.size)}</div>
-                            <div class="item-type">${getFileExtension(item.name)}</div>
-                        </div>
-                    </div>
-                    <div class="selection-indicator">✓</div>
-                </div>
-            `;
-        }
-        
-        // Получение иконки для файла
-        function getFileIcon(type) {
-            const icons = {
-                image: '🖼️',
-                audio: '🎵',
-                video: '🎬',
-                archive: '📦',
-                document: '📄',
-                default: '📄'
-            };
-            return icons[type] || icons.default;
-        }
-        
-        // Категория файла
-        function getFileCategory(filename) {
-            const ext = filename.split('.').pop().toLowerCase();
-            
-            const imageExt = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg', 'ico'];
-            const audioExt = ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac'];
-            const videoExt = ['mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv'];
-            const archiveExt = ['zip', 'rar', '7z', 'tar', 'gz'];
-            const documentExt = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'rtf'];
-            
-            if (imageExt.includes(ext)) return 'image';
-            if (audioExt.includes(ext)) return 'audio';
-            if (videoExt.includes(ext)) return 'video';
-            if (archiveExt.includes(ext)) return 'archive';
-            if (documentExt.includes(ext)) return 'document';
-            return 'default';
-        }
-        
-        // Экранирование
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        function escapeJsString(text) {
-            return text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
-        }
-        
-        // Обработка клика по элементу
-        function handleItemClick(event, name, isFolder, url, item) {
-            if (selectionMode) {
-                toggleSelection(event.currentTarget.dataset.path);
+
+        // Handlers
+        function handleItemClick(e, path, isFolder) {
+            if (selectMode) {
+                toggleSelect(path);
                 return;
             }
             
             if (isFolder) {
-                openFolder(name);
+                openFolder(path);
             } else {
-                addToQueue(item || JSON.parse(event.currentTarget.dataset.item));
+                const item = items.find(i => i.path === path);
+                if (item) addToQueue(item);
             }
         }
-        
-        // Открытие папки
-        function openFolder(folderName) {
-            const newPath = currentPath ? `${currentPath}/${folderName}` : folderName;
-            loadFolderContents(newPath);
+
+        function openFolder(path) {
+            const name = path.split('/').pop();
+            const newPath = currentPath ? `${currentPath}/${name}` : name;
+            loadFolder(newPath);
         }
-        
-        // Переключение режима выделения
-        function toggleSelectionMode() {
-            selectionMode = !selectionMode;
-            document.body.classList.toggle('selection-mode', selectionMode);
-            document.getElementById('selection-panel').classList.toggle('visible', selectionMode);
-            
-            if (!selectionMode) {
-                clearSelection();
-            }
+
+        function goBack() {
+            if (!currentPath) return;
+            const parts = currentPath.split('/');
+            parts.pop();
+            loadFolder(parts.join('/'));
         }
-        
-        // Переключение выделения
-        function toggleSelection(path) {
-            if (selectedItems.has(path)) {
-                selectedItems.delete(path);
+
+        // Selection
+        function toggleSelectMode() {
+            selectMode = !selectMode;
+            document.getElementById('selectionBar').classList.toggle('visible', selectMode);
+            if (!selectMode) clearSelection();
+        }
+
+        function toggleSelect(path) {
+            if (selectedPaths.has(path)) {
+                selectedPaths.delete(path);
             } else {
-                selectedItems.add(path);
+                selectedPaths.add(path);
             }
-            
-            updateSelectionDisplay();
+            updateSelection();
         }
-        
-        // Выделить все
+
         function selectAll() {
-            const items = document.querySelectorAll('.item[data-type="file"]');
             items.forEach(item => {
-                selectedItems.add(item.dataset.path);
+                if (item.type !== 'dir') selectedPaths.add(item.path);
             });
-            updateSelectionDisplay();
+            updateSelection();
         }
-        
-        // Очистить выделение
+
         function clearSelection() {
-            selectedItems.clear();
-            updateSelectionDisplay();
+            selectedPaths.clear();
+            updateSelection();
         }
-        
-        // Добавить выделенные в очередь
-        function addSelectedToQueue() {
-            const items = document.querySelectorAll('.item[data-type="file"][data-path]');
-            items.forEach(item => {
-                if (selectedItems.has(item.dataset.path)) {
-                    try {
-                        const itemData = JSON.parse(item.dataset.item);
-                        addToQueue(itemData, true); // silent mode
-                    } catch (e) {
-                        console.warn('Ошибка парсинга данных элемента', e);
-                    }
-                }
-            });
-            
-            showNotification(`📥 Добавлено в очередь: ${selectedItems.size} файлов`, 'success');
+
+        function cancelSelect() {
+            selectMode = false;
+            document.getElementById('selectionBar').classList.remove('visible');
             clearSelection();
-            toggleSelectionMode();
         }
-        
-        // Обновление отображения выделения
-        function updateSelectionDisplay() {
-            // Обновляем классы элементов
-            document.querySelectorAll('.item').forEach(item => {
-                if (selectedItems.has(item.dataset.path)) {
-                    item.classList.add('selected');
-                } else {
-                    item.classList.remove('selected');
-                }
-            });
-            
-            // Обновляем счетчик
-            document.getElementById('selection-count').textContent = `Выбрано: ${selectedItems.size}`;
+
+        function updateSelection() {
+            document.getElementById('selectionCount').textContent = `Выбрано: ${selectedPaths.size}`;
+            renderItems();
         }
-        
-        // Очередь файлов
-        
-        // Добавление в очередь
+
+        function addSelectedToQueue() {
+            const selected = items.filter(item => 
+                item.type !== 'dir' && selectedPaths.has(item.path)
+            );
+            selected.forEach(item => addToQueue(item, true));
+            showToast(`Добавлено в очередь: ${selected.length}`);
+            cancelSelect();
+        }
+
+        // Queue
         function addToQueue(item, silent = false) {
-            if (!item) return;
+            if (!item || item.type === 'dir') return;
             
             const queueItem = {
                 id: Date.now() + Math.random(),
                 name: item.name,
-                url: item.download_url || `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`,
-                status: 'pending',
-                item: item
+                path: item.path,
+                url: item.download_url,
+                status: 'pending'
             };
             
-            fileQueue.push(queueItem);
-            updateQueueDisplay();
+            queue.push(queueItem);
+            updateQueueUI();
             
-            if (!silent) {
-                showNotification(`📥 "${item.name}" добавлен в очередь`, 'info');
-            }
+            if (!silent) showToast(`➕ ${item.name}`);
             
-            if (!isProcessing) {
-                processQueue();
-            }
+            if (!isProcessing) processQueue();
         }
-        
-        // Обработка очереди
+
         async function processQueue() {
-            if (fileQueue.length === 0) {
+            if (queue.length === 0) {
                 isProcessing = false;
                 return;
             }
             
             isProcessing = true;
             
-            const currentItem = fileQueue.find(item => item.status === 'pending');
-            if (!currentItem) {
+            const item = queue.find(q => q.status === 'pending');
+            if (!item) {
                 isProcessing = false;
                 return;
             }
             
-            currentItem.status = 'sending';
-            updateQueueDisplay();
+            item.status = 'sending';
+            updateQueueUI();
             
             try {
-                await sendFileViaBot(currentItem.item, currentItem.url);
-                currentItem.status = 'completed';
-                showNotification(`✅ "${currentItem.name}" отправлен`, 'success');
-            } catch (error) {
-                console.error('Ошибка отправки:', error);
-                currentItem.status = 'error';
-                showNotification(`❌ Ошибка: "${currentItem.name}"`, 'error');
+                await sendFile(item);
+                item.status = 'done';
+                showToast(`✅ ${item.name}`);
+            } catch (e) {
+                console.error('Send error:', e);
+                item.status = 'error';
+                showToast(`❌ ${item.name}`);
             }
             
-            updateQueueDisplay();
+            updateQueueUI();
             
-            // Продолжаем обработку
-            setTimeout(() => processQueue(), 500);
+            // Continue queue
+            setTimeout(processQueue, 500);
         }
-        
-        // Отправка через бота
-        async function sendFileViaBot(item, url) {
+
+        async function sendFile(item) {
             const userId = tg.initDataUnsafe?.user?.id;
+            if (!userId) throw new Error('No user ID');
+
+            // Download file
+            const res = await fetch(item.url);
+            if (!res.ok) throw new Error('Download failed');
             
-            if (!userId) {
-                throw new Error('Нет ID пользователя');
-            }
+            const blob = await res.blob();
             
-            // Скачиваем файл
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Ошибка загрузки файла');
-            
-            const blob = await response.blob();
-            
-            // Отправляем боту
+            // Send to bot
             const formData = new FormData();
             formData.append('chat_id', userId);
             formData.append('document', blob, item.name);
             
-            const botResponse = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+            const botRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
                 method: 'POST',
                 body: formData
             });
             
-            const result = await botResponse.json();
-            
-            if (!result.ok) {
-                throw new Error(result.description);
-            }
+            const result = await botRes.json();
+            if (!result.ok) throw new Error(result.description);
         }
-        
-        // Обновление отображения очереди
-        function updateQueueDisplay() {
-            const queueList = document.getElementById('queue-list');
-            const badge = document.getElementById('queue-badge');
+
+        function updateQueueUI() {
+            const list = document.getElementById('queueList');
+            const badge = document.getElementById('queueBadge');
             
-            const pendingCount = fileQueue.filter(item => item.status === 'pending' || item.status === 'sending').length;
-            badge.textContent = pendingCount;
+            const pending = queue.filter(q => q.status === 'pending' || q.status === 'sending').length;
+            badge.textContent = pending;
             
-            if (fileQueue.length === 0) {
-                queueList.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--hint-color);">Очередь пуста</div>';
+            if (queue.length === 0) {
+                list.innerHTML = '<div style="padding:20px; text-align:center;">Очередь пуста</div>';
                 return;
             }
             
-            queueList.innerHTML = fileQueue.map(item => `
+            list.innerHTML = queue.map(q => `
                 <div class="queue-item">
-                    <div class="queue-item-status ${item.status}"></div>
-                    <div class="queue-item-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
-                    <div>${item.status === 'completed' ? '✅' : item.status === 'error' ? '❌' : ''}</div>
+                    <div class="queue-status ${q.status}"></div>
+                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(q.name)}</span>
+                    <span>${q.status === 'done' ? '✅' : q.status === 'error' ? '❌' : ''}</span>
                 </div>
             `).join('');
         }
-        
-        // Переключение отображения очереди
+
         function toggleQueue() {
-            document.getElementById('queue-panel').classList.toggle('visible');
+            document.getElementById('queuePanel').classList.toggle('visible');
         }
-        
-        // Очистка очереди
+
         function clearQueue() {
-            fileQueue = fileQueue.filter(item => item.status === 'sending');
-            if (fileQueue.length === 0) {
-                isProcessing = false;
-            }
-            updateQueueDisplay();
-            showNotification('🧹 Очередь очищена', 'info');
+            queue = queue.filter(q => q.status === 'sending');
+            if (queue.length === 0) isProcessing = false;
+            updateQueueUI();
         }
-        
-        // Обработчик поиска
+
+        // Sort
+        function setSort(type) {
+            sortBy = type;
+            document.getElementById('sortNameBtn').classList.toggle('active', type === 'name');
+            document.getElementById('sortDateBtn').classList.toggle('active', type === 'date');
+            renderItems();
+        }
+
+        // Search
         let searchTimeout;
-        document.getElementById('search-input').addEventListener('input', function(e) {
+        document.getElementById('searchInput').addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
-            
             searchTimeout = setTimeout(() => {
-                const query = e.target.value.toLowerCase().trim();
+                searchQuery = e.target.value;
                 
-                if (query.length === 0) {
-                    document.getElementById('search-results').style.display = 'none';
-                    document.getElementById('main-content').style.display = 'block';
+                if (searchQuery) {
+                    const results = allItems.filter(item => 
+                        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+                    ).slice(0, 50);
+                    items = results;
+                } else {
+                    loadFolder(currentPath);
                     return;
                 }
                 
-                const searchResults = allFilesCache.filter(item => 
-                    item.name.toLowerCase().includes(query)
-                );
-                
-                const resultsContainer = document.getElementById('search-results');
-                const resultsGrid = document.getElementById('search-results-grid');
-                const resultsTitle = document.getElementById('search-results-title');
-                
-                document.getElementById('main-content').style.display = 'none';
-                resultsContainer.style.display = 'block';
-                
-                if (searchResults.length === 0) {
-                    resultsTitle.textContent = `❌ Ничего не найдено для "${query}"`;
-                    resultsGrid.innerHTML = '<div class="empty">Попробуйте другой запрос</div>';
-                } else {
-                    resultsTitle.textContent = `📁 Найдено: ${searchResults.length} файлов`;
-                    resultsGrid.innerHTML = searchResults
-                        .slice(0, 50)
-                        .map(item => createSearchResultElement(item))
-                        .join('');
-                }
+                renderItems();
             }, 300);
         });
-        
-        // Элемент результата поиска
-        function createSearchResultElement(item) {
-            const isImage = isImageFile(item.name);
-            const fileType = getFileCategory(item.name);
-            const icon = getFileIcon(fileType);
-            const rawUrl = item.download_url || 
-                          `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${item.path}`;
-            
-            const safeName = escapeHtml(item.name);
-            const escapedNameForJs = escapeJsString(item.name);
-            const escapedUrlForJs = escapeJsString(rawUrl);
-            
-            return `
-                <div class="item" onclick='addToQueue(${escapeJsString(JSON.stringify(item))})'>
-                    <div class="item-preview">
-                        ${isImage ? 
-                            `<img src="${escapeHtml(rawUrl)}" 
-                                  alt="${safeName}"
-                                  loading="lazy"
-                                  onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'file-icon ${fileType}\\'>${icon}</div>';">` :
-                            `<div class="file-icon ${fileType}">${icon}</div>`
-                        }
-                    </div>
-                    <div class="item-info">
-                        <div class="item-name" title="${safeName}">${safeName}</div>
-                        <div class="item-details">
-                            <div class="item-size">${formatFileSize(item.size)}</div>
-                            <div class="item-type">${getFileExtension(item.name)}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
+
+        // Utils
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
         }
-        
-        // Вспомогательные функции
-        function isImageFile(filename) {
-            const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg', 'ico'];
-            const ext = filename.split('.').pop().toLowerCase();
-            return imageExtensions.includes(ext);
+
+        function showLoading() {
+            document.getElementById('content').innerHTML = '<div class="loading">Загрузка...</div>';
         }
-        
-        function getFileExtension(filename) {
-            const parts = filename.split('.');
-            if (parts.length === 1) return 'ФАЙЛ';
-            return parts.pop().toUpperCase();
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
-        
-        function formatFileSize(bytes) {
-            if (!bytes || bytes === 0) return '0 B';
-            const k = 1024;
+
+        function formatSize(bytes) {
+            if (!bytes) return '0 B';
             const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
+        }
+
+        function getExt(name) {
+            const parts = name.split('.');
+            return parts.length > 1 ? parts.pop().toUpperCase() : 'ФАЙЛ';
         }
     </script>
 </body>
-</html>
+        </html>
